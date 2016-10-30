@@ -28,14 +28,50 @@ body {
   pointer-events: none;
 }
 
+/*styling for tooltip*/
+#tooltip {
+      position: absolute;
+      width: 200px;
+      height: auto;
+      padding: 10px;
+      background-color: white;
+      -webkit-border-radius: 10px;
+      -moz-border-radius: 10px;
+      border-radius: 10px;
+      -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+      -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+    }
+#tooltip.hidden {
+        display: none;
+      }
+#tooltip p {
+        margin: 0;
+        font-family: sans-serif;
+        font-size: 12px;
+        line-height: 14px;
+      }
+
 </style>
 <body>
+
+  <!-- tooltip for when hovering over bars -->
+  <div id="tooltip" class="hidden">
+        <p><strong><span id="node_candidate">NAME</span></strong></p>
+        <p><span id="node_date">DATE</span></p>
+        <p>Sentiment: <span id="node_sentiment">SCORE</span></p>
+        <p><em><span id="node_source">SOURCE</span></em></p>
+  </div>
+
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
 <script>
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
+
+var hover_pad = 45;
 
 /*
  * value accessor - returns the value to encode for a given data object.
@@ -45,7 +81,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
  */
 
 // setup x
-var xValue = function(d) { return d["Date"];}, // data -> value
+var  xValue = function(d) { return d["Date"];}, // data -> value
      xScale = d3.time.scale().range([0, width]), // value -> display
      xMap = function(d) { return xScale(xValue(d));}, // data -> display
      xAxis = d3.svg.axis().scale(xScale).orient("bottom");
@@ -58,23 +94,20 @@ var yValue = function(d) { return d["Score"];}, // data -> value
 
 // define date format
 var parseDate = d3.time.format("%m/%d/%Y").parse;
-var formatDate = d3.time.format("%b.%d,%Y");
+var formatDate = d3.time.format("%b %d, %Y");
 
 // setup fill color
 var cValue = function(d) { return d.Candidate;},
-    color = d3.scale.category10();
+    color = d3.scale.ordinal()
+      .domain(["Clinton", "Trump"])
+      .range(["#2980B9", "#C94740"]);
 
 // add the graph canvas to the body of the webpage
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-  .append("g")
+    .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-// add the tooltip area to the webpage
-var tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
 
 // load data
 d3.csv("sentiment.csv", function(error, data) {
@@ -95,7 +128,7 @@ d3.csv("sentiment.csv", function(error, data) {
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
-     .append("text")
+      .append("text")
       .attr("class", "label")
       .attr("x", width)
       .attr("y", -6)
@@ -106,10 +139,11 @@ d3.csv("sentiment.csv", function(error, data) {
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
-    .append("text")
+      .append("text")
       .attr("class", "label")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
+      // .attr("transform", "rotate(-90)")
+      .attr("y", 0)
+      .attr("x", 30)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("Score");
@@ -117,26 +151,39 @@ d3.csv("sentiment.csv", function(error, data) {
   // draw dots
   svg.selectAll(".dot")
       .data(data)
-    .enter().append("circle")
+      .enter().append("circle")
       .attr("class", "dot")
       .attr("r", 3.5)
       .attr("cx", xMap)
       .attr("cy", yMap)
       .style("fill", function(d) { return color(cValue(d));})
       .on("mouseover", function(d) {
-          tooltip.transition()
-               .duration(200)
-               .style("opacity", .9);
-          tooltip.html(d["Candidate"] + "<br/> Date: "
-	        + formatDate(xValue(d)) +"<br/> Sentiment: "
-	        + yValue(d) + "<br/>" + d["Source"])
-               .style("left", (d3.event.pageX + 5) + "px")
-               .style("top", (d3.event.pageY - 28) + "px");
+
+          // show the tool tip with the details of the node
+          var xPosition = parseFloat(d3.select(this).attr("cx"))+hover_pad;
+          var yPosition = parseFloat(d3.select(this).attr("cy"))+hover_pad;
+          d3.select("#tooltip")
+            .style("left",xPosition + "px")
+            .style("top",yPosition + "px")
+            .select("#node_candidate")
+            .text(d.Candidate);
+
+          d3.select("#tooltip")
+            .select("#node_sentiment")
+            .text(d.Score);
+
+          d3.select("#tooltip")
+            .select("#node_source")
+            .text(d.Source);
+
+          d3.select("#tooltip")
+            .select("#node_date")
+            .text(formatDate(d.Date));
+
+          d3.select("#tooltip").classed("hidden",false);
       })
       .on("mouseout", function(d) {
-          tooltip.transition()
-               .duration(500)
-               .style("opacity", 0);
+          d3.select("#tooltip").classed("hidden",true);
       });
 
   // draw legend
