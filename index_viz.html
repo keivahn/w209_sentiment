@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
+<!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
+
+<style>
+body {
+  font: 11px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #000;
+}
+
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+
+/*styling for tooltip*/
+#tooltip {
+      position: absolute;
+      width: 200px;
+      height: auto;
+      padding: 10px;
+      background-color: white;
+      -webkit-border-radius: 10px;
+      -moz-border-radius: 10px;
+      border-radius: 10px;
+      -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+      -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+    }
+#tooltip.hidden {
+        display: none;
+      }
+#tooltip p {
+        margin: 0;
+        font-family: sans-serif;
+        font-size: 12px;
+        line-height: 14px;
+      }
+
+/* Styling for line*/
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+</style>
+<body>
+
+  <!-- tooltip for when hovering over bars -->
+  <div id="tooltip" class="hidden">
+        <p><strong><span id="node_candidate">NAME</span></strong></p>
+        <p><span id="node_date">DATE</span></p>
+        <p>Sentiment: <span id="node_sentiment">SCORE</span></p>
+        <p><em><span id="node_source">SOURCE</span></em></p>
+  </div>
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+<script>
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var hover_pad = 45;
+
+/*
+ * value accessor - returns the value to encode for a given data object.
+ * scale - maps value to a visual display encoding, such as a pixel position.
+ * map function - maps from data value to display value
+ * axis - sets up axis
+ */
+
+// setup x
+var  xValue = function(d) { return d["Date"];}, // data -> value
+     xScale = d3.time.scale().range([0, width]), // value -> display
+     xMap = function(d) { return xScale(xValue(d));}, // data -> display
+     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+// setup y
+var yValue = function(d) { return d["Score"];}, // data -> value
+    yScale = d3.scale.linear().range([height, 0]), // value -> display
+    yMap = function(d) { return yScale(yValue(d));}, // data -> display
+    yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// define date format
+var parseDate = d3.time.format("%m/%d/%Y").parse;
+var formatDate = d3.time.format("%b %d, %Y");
+
+// setup fill color
+var cValue = function(d) { return d.Candidate;},
+    color = d3.scale.ordinal()
+      .domain(["Clinton", "Trump"])
+      .range(["#2980B9", "#C94740"]);
+
+// add the graph canvas to the body of the webpage
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Define the line
+var sentline = d3.svg.line()
+    .x(function(d) { return xScale(d.Date); })
+    .y(function(d) { return yScale(d.Avg_Score); })
+    .interpolate("basis");
+
+// load data
+d3.csv("sentiment.csv", function(error, data) {
+
+  // change string (from CSV) into number format
+  data.forEach(function(d) {
+    d["Date"] = parseDate(d["Date"]);
+    d["Score"] = +d["Score"];
+//    console.log(d);
+  });
+
+  // don't want dots overlapping axis, so add in buffer to data domain
+  xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+  yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
+
+  // x-axis
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("Date");
+
+  // y-axis
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+      .append("text")
+      .attr("class", "label")
+      // .attr("transform", "rotate(-90)")
+      .attr("y", 0)
+      .attr("x", 30)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Score");
+
+  // draw dots
+  svg.selectAll(".dot")
+      .data(data)
+      .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 3.5)
+      .attr("cx", xMap)
+      .attr("cy", yMap)
+      .style("fill", function(d) { return color(cValue(d));})
+      .on("mouseover", function(d) {
+
+          // show the tool tip with the details of the node
+          var xPosition = parseFloat(d3.select(this).attr("cx"))+hover_pad;
+          var yPosition = parseFloat(d3.select(this).attr("cy"))+hover_pad;
+          d3.select("#tooltip")
+            .style("left",xPosition + "px")
+            .style("top",yPosition + "px")
+            .select("#node_candidate")
+            .text(d.Candidate);
+
+          d3.select("#tooltip")
+            .select("#node_sentiment")
+            .text(d.Score);
+
+          d3.select("#tooltip")
+            .select("#node_source")
+            .text(d.Source);
+
+          d3.select("#tooltip")
+            .select("#node_date")
+            .text(formatDate(d.Date));
+
+          d3.select("#tooltip").classed("hidden",false);
+      })
+      .on("mouseout", function(d) {
+          d3.select("#tooltip").classed("hidden",true);
+      });
+
+  // draw legend
+  var legend = svg.selectAll(".legend")
+      .data(color.domain())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  // draw legend colored rectangles
+  legend.append("rect")
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color);
+
+  // draw legend text
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d;})
+});
+
+d3.csv("avg_sentiment.csv", function(data) {
+  data.forEach(function(d) {
+    d.Date = parseDate(d.Date);
+    d.Avg_Score = +d.Avg_Score;
+  });
+
+  // Scale the range of the data
+    xScale.domain(d3.extent(data, function(d) { return d.Date; }));
+    yScale.domain([-1,1]); 
+
+    // Nest the entries by Candidate
+    var dataNest = d3.nest()
+        .key(function(d) {return d.Candidate;})
+        .entries(data);
+
+    // Loop through each Candidate / key
+    dataNest.forEach(function(d) {
+
+        svg.append("path")
+            .attr("class", "line")
+            .attr("d", sentline(d.values))
+            .style("stroke", function() { return d.color=color(d.key) }); 
+
+    });
+});
+
+</script>
+</body>
+</html>
