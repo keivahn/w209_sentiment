@@ -4,6 +4,7 @@
 
 <!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
 <!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
+<!-- Filtering example from http://plnkr.co/edit/MzEop6GtWdpJf4cbIsQU?p=preview -->
 
 <style>
 body {
@@ -54,16 +55,56 @@ body {
       }
 
 /* Styling for line*/
-path { 
+path {
     stroke: steelblue;
     stroke-width: 2;
     fill: none;
 }
 
 </style>
+
 <body>
 
-  <!-- tooltip for when hovering over bars -->
+  <div id="filter">
+      <strong>News source:</strong>
+
+      <select id="news-sources" name="news-sources">
+          <option value="All">All</option>
+          <option value="ap.org">ap.org</option>
+          <option value="bloomberg.com">bloomberg.com</option>
+          <option value="breitbart.com">breitbart.com</option>
+          <option value="cadillacnews.com">cadillacnews.com</option>
+          <option value="cbsnews.com">cbsnews.com</option>
+          <option value="chicagotribune.com">chicagotribune.com</option>
+          <option value="cnn.com">cnn.com</option>
+          <option value="democraticunderground.com">democraticunderground.com</option>
+          <option value="foxnews.com">foxnews.com</option>
+          <option value="freerepublic.com">freerepublic.com</option>
+          <option value="gazette.com">gazette.com</option>
+          <option value="huffingtonpost.com">huffingtonpost.com</option>
+          <option value="msn.com">msn.com</option>
+          <option value="msnbc.com">msnbc.com</option>
+          <option value="mysanantonio.com">mysanantonio.com</option>
+          <option value="newsmax.com">newsmax.com</option>
+          <option value="patch.com">patch.com</option>
+          <option value="people.com">people.com</option>
+          <option value="reuters.com">reuters.com</option>
+          <option value="srnnews.com">srnnews.com</option>
+          <option value="tbo.com">tbo.com</option>
+          <option value="thehill.com">thehill.com</option>
+          <option value="theweek.com">theweek.com</option>
+          <option value="time.com">time.com</option>
+          <option value="townhall.com">townhall.com</option>
+          <option value="usweekly.com">usweekly.com</option>
+          <option value="washingtonpost.com">washingtonpost.com</option>
+          <option value="washingtontimes.com">washingtontimes.com</option>
+          <option value="wsj.com">wsj.com</option>
+          <option value="yahoo.com">yahoo.com</option>
+      </select>
+
+  </div>
+
+  <!-- tooltip for when hovering over dots -->
   <div id="tooltip" class="hidden">
         <p><strong><span id="node_candidate">NAME</span></strong></p>
         <p><span id="node_date">DATE</span></p>
@@ -199,10 +240,37 @@ d3.csv("sentiment.csv", function(error, data) {
           d3.select("#tooltip").classed("hidden",true);
       });
 
+  // add a dropdown menu to select by news source
+  var dropDown = d3.select("#news-sources");
+
+  dropDown.on("change", function() {
+       var selected = this.value;
+
+       // make all dots visible if the user has selected "All"
+       if(selected == 'All'){
+         svg.selectAll(".dot")
+            .attr("visibility", "visible");
+          }
+
+       // make only the appropriate dot visible if the user has
+       // selected something else; first make all dots visible, then
+       // make all dots but the selected dot invisible
+       else {
+
+        svg.selectAll(".dot")
+           .attr("visibility", "visible");
+
+        svg.selectAll(".dot")
+           .filter(function(d) {return selected != d.Source;})
+           .attr("visibility", "hidden");
+          };
+
+       });
+
   // draw legend
   var legend = svg.selectAll(".legend")
       .data(color.domain())
-    .enter().append("g")
+      .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
@@ -230,7 +298,7 @@ d3.csv("avg_sentiment.csv", function(data) {
 
   // Scale the range of the data
     xScale.domain(d3.extent(data, function(d) { return d.Date; }));
-    yScale.domain([-1,1]); 
+    yScale.domain([-1,1]);
 
     // Nest the entries by Candidate
     var dataNest = d3.nest()
@@ -243,7 +311,7 @@ d3.csv("avg_sentiment.csv", function(data) {
         svg.append("path")
             .attr("class", "line")
             .attr("d", sentline(d.values))
-            .style("stroke", function() { return d.color=color(d.key) }); 
+            .style("stroke", function() { return d.color=color(d.key) });
 
     });
 });
