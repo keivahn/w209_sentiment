@@ -4,7 +4,6 @@
 
 <!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
 <!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
-<!-- Filtering example from http://plnkr.co/edit/MzEop6GtWdpJf4cbIsQU?p=preview -->
 
 <style>
 body {
@@ -55,16 +54,14 @@ body {
       }
 
 /* Styling for line*/
-path {
+.line { 
     stroke: steelblue;
-    stroke-width: 2;
+    stroke-width: 5;
     fill: none;
 }
 
 </style>
-
 <body>
-
   <div id="filter">
       <strong>News source:</strong>
 
@@ -87,7 +84,6 @@ path {
           <option value="mysanantonio.com">mysanantonio.com</option>
           <option value="newsmax.com">newsmax.com</option>
           <option value="patch.com">patch.com</option>
-          <option value="people.com">people.com</option>
           <option value="reuters.com">reuters.com</option>
           <option value="srnnews.com">srnnews.com</option>
           <option value="tbo.com">tbo.com</option>
@@ -95,7 +91,6 @@ path {
           <option value="theweek.com">theweek.com</option>
           <option value="time.com">time.com</option>
           <option value="townhall.com">townhall.com</option>
-          <option value="usweekly.com">usweekly.com</option>
           <option value="washingtonpost.com">washingtonpost.com</option>
           <option value="washingtontimes.com">washingtontimes.com</option>
           <option value="wsj.com">wsj.com</option>
@@ -104,7 +99,7 @@ path {
 
   </div>
 
-  <!-- tooltip for when hovering over dots -->
+  <!-- tooltip for when hovering over bars -->
   <div id="tooltip" class="hidden">
         <p><strong><span id="node_candidate">NAME</span></strong></p>
         <p><span id="node_date">DATE</span></p>
@@ -116,8 +111,8 @@ path {
 
 <script>
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    width = 1500 - margin.left - margin.right,
+    height = 800 - margin.top - margin.bottom;
 
 var hover_pad = 45;
 
@@ -141,7 +136,7 @@ var yValue = function(d) { return d["Score"];}, // data -> value
     yAxis = d3.svg.axis().scale(yScale).orient("left");
 
 // define date format
-var parseDate = d3.time.format("%m/%d/%Y").parse;
+var parseDate = d3.time.format("%Y-%m-%d").parse;
 var formatDate = d3.time.format("%b %d, %Y");
 
 // setup fill color
@@ -164,7 +159,7 @@ var sentline = d3.svg.line()
     .interpolate("basis");
 
 // load data
-d3.csv("sentiment.csv", function(error, data) {
+d3.csv("top25_sentiment.csv", function(error, data) {
 
   // change string (from CSV) into number format
   data.forEach(function(d) {
@@ -224,7 +219,7 @@ d3.csv("sentiment.csv", function(error, data) {
 
           d3.select("#tooltip")
             .select("#node_sentiment")
-            .text(d.Score);
+            .text(d.Score.toFixed(3));
 
           d3.select("#tooltip")
             .select("#node_source")
@@ -240,7 +235,6 @@ d3.csv("sentiment.csv", function(error, data) {
           d3.select("#tooltip").classed("hidden",true);
       });
 
-  // add a dropdown menu to select by news source
   var dropDown = d3.select("#news-sources");
 
   dropDown.on("change", function() {
@@ -267,10 +261,11 @@ d3.csv("sentiment.csv", function(error, data) {
 
        });
 
+
   // draw legend
   var legend = svg.selectAll(".legend")
       .data(color.domain())
-      .enter().append("g")
+    .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
@@ -298,7 +293,7 @@ d3.csv("avg_sentiment.csv", function(data) {
 
   // Scale the range of the data
     xScale.domain(d3.extent(data, function(d) { return d.Date; }));
-    yScale.domain([-1,1]);
+    yScale.domain([-1,1]); 
 
     // Nest the entries by Candidate
     var dataNest = d3.nest()
@@ -311,7 +306,7 @@ d3.csv("avg_sentiment.csv", function(data) {
         svg.append("path")
             .attr("class", "line")
             .attr("d", sentline(d.values))
-            .style("stroke", function() { return d.color=color(d.key) });
+            .style("stroke", function() { return d.color=color(d.key) }); 
 
     });
 });
