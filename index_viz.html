@@ -159,7 +159,7 @@ var sentline = d3.svg.line()
     .interpolate("basis");
 
 // load data
-d3.csv("top25_sentiment.csv", function(error, data) {
+d3.csv("sentiment.csv", function(error, data) {
 
   // change string (from CSV) into number format
   data.forEach(function(d) {
