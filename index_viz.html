@@ -60,6 +60,13 @@ body {
     fill: none;
 }
 
+/* Styling for line*/
+.line2 { 
+    stroke: steelblue;
+    stroke-width: 5;
+    fill: none;
+}
+
 </style>
 <body>
   <div id="filter">
@@ -158,6 +165,11 @@ var sentline = d3.svg.line()
     .y(function(d) { return yScale(d.Avg_Score); })
     .interpolate("basis");
 
+var sentline2 = d3.svg.line()
+    .x(function(d) { return xScale(d.Date); })
+    .y(function(d) { return yScale(d.Avg_Score); })
+    .interpolate("basis");
+
 // load data
 d3.csv("sentiment.csv", function(error, data) {
 
@@ -244,6 +256,9 @@ d3.csv("sentiment.csv", function(error, data) {
        if(selected == 'All'){
          svg.selectAll(".dot")
             .attr("visibility", "visible");
+
+          svg.selectAll(".line2")
+            .attr("visibility", "hidden"); 
           }
 
        // make only the appropriate dot visible if the user has
@@ -257,10 +272,36 @@ d3.csv("sentiment.csv", function(error, data) {
         svg.selectAll(".dot")
            .filter(function(d) {return selected != d.Source;})
            .attr("visibility", "hidden");
-          };
 
-       });
+        d3.csv("news_source.csv", function(data) {
+          data.forEach(function(d) {
+            d.Date = parseDate(d.Date);
+            d.Avg_Score = +d.Avg_Score;
+          });
 
+          // Scale the range of the data
+            xScale.domain(d3.extent(data, function(d) { return d.Date; }));
+            yScale.domain([-1,1]); 
+
+            // Nest the entries by Candidate
+            var dataNest = d3.nest()
+                .key(function(d) {return d.Candidate;})
+                .entries(data);
+
+            // Loop through each Candidate / key and assign to line2 attribute
+            // which is different from the axis and trend line for all
+            dataNest.forEach(function(d) {
+
+                svg.append("path")
+                    .attr("class", "line2")
+                    .attr("d", sentline2(d.values))
+                    .style("stroke-dasharray", ("5, 5"))
+                    .style("stroke", function() { return d.color=color(d.key) }); 
+
+                  });
+              });
+            };
+          });
 
   // draw legend
   var legend = svg.selectAll(".legend")
