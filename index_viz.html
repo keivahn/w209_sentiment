@@ -54,7 +54,7 @@ body {
       }
 
 /* Styling for line*/
-.line { 
+.line {
     stroke: steelblue;
     stroke-width: 5;
     fill: none;
@@ -111,7 +111,7 @@ body {
 
 <script>
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 1500 - margin.left - margin.right,
+    width = 1100 - margin.left - margin.right,
     height = 800 - margin.top - margin.bottom;
 
 var hover_pad = 45;
@@ -293,7 +293,7 @@ d3.csv("avg_sentiment.csv", function(data) {
 
   // Scale the range of the data
     xScale.domain(d3.extent(data, function(d) { return d.Date; }));
-    yScale.domain([-1,1]); 
+    yScale.domain([-1,1]);
 
     // Nest the entries by Candidate
     var dataNest = d3.nest()
@@ -306,7 +306,7 @@ d3.csv("avg_sentiment.csv", function(data) {
         svg.append("path")
             .attr("class", "line")
             .attr("d", sentline(d.values))
-            .style("stroke", function() { return d.color=color(d.key) }); 
+            .style("stroke", function() { return d.color=color(d.key) });
 
     });
 });
