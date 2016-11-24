@@ -61,7 +61,7 @@ body {
 }
 
 /* Styling for line*/
-.line2 { 
+.line2 {
     stroke: steelblue;
     stroke-width: 5;
     fill: none;
@@ -117,7 +117,7 @@ body {
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
 <script>
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
+var margin = {top: 20, right: 20, bottom: 40, left: 40},
     width = 1100 - margin.left - margin.right,
     height = 800 - margin.top - margin.bottom;
 
@@ -258,7 +258,7 @@ d3.csv("sentiment.csv", function(error, data) {
             .attr("visibility", "visible");
 
           svg.selectAll(".line2")
-            .attr("visibility", "hidden"); 
+            .attr("visibility", "hidden");
           }
 
        // make only the appropriate dot visible if the user has
@@ -281,7 +281,7 @@ d3.csv("sentiment.csv", function(error, data) {
 
           // Scale the range of the data
             xScale.domain(d3.extent(data, function(d) { return d.Date; }));
-            yScale.domain([-1,1]); 
+            yScale.domain([-1,1]);
 
             // Nest the entries by Candidate
             var dataNest = d3.nest()
@@ -296,7 +296,7 @@ d3.csv("sentiment.csv", function(error, data) {
                     .attr("class", "line2")
                     .attr("d", sentline2(d.values))
                     .style("stroke-dasharray", ("5, 5"))
-                    .style("stroke", function() { return d.color=color(d.key) }); 
+                    .style("stroke", function() { return d.color=color(d.key) });
 
                   });
               });
@@ -351,6 +351,242 @@ d3.csv("avg_sentiment.csv", function(data) {
 
     });
 });
+
+// set the maximum and minimum bins, we set this as a constant because
+// there is a solid max and minimum to the sentiment scores
+var minbin = -1.0;
+var maxbin = 1.0;
+var binsize = 0.1;
+var numbins = (maxbin - minbin)/binsize;
+
+// set the limits of the x-axis
+var xmin = minbin - 0.1
+var xmax = maxbin + 0.1
+
+// whitespace on either side of the bars
+var binmargin = .005;
+
+var hist_width = width/2;
+var hist_height = height/3;
+
+// add the histogram for Clinton
+// populate the list of values into an array for each candidate
+var sentClinton = d3.csv("sent_clinton.csv", function(data) {
+    // load in the data
+    var values = [];
+
+    data.forEach(function(d) {
+      values.push(+d.Score);
+      });
+
+      // create an array to store the histogram data
+      var histdata = new Array(numbins);
+      for (var i=0; i<numbins; i++) {
+        histdata[i] = {numfill:0};
+      }
+
+      // loop through each data point and identify its appropriate bin
+      values.forEach(function(d) {
+        var bin = Math.floor((d - minbin)/binsize);
+        // provided that we actually got a bin, increment that bin count by
+        // one
+        if((bin.toString()!="NaN") && (bin < histdata.length)) {
+          histdata[bin].numfill += 1;
+        }
+      });
+
+      // x-scale for the width of the bins
+      var x = d3.scale.linear()
+                .domain([0,(xmax-xmin)])
+                .range([0,hist_width]);
+
+      // x-scale for the placement of the placement of the bars
+      var x2 = d3.scale.linear()
+                 .domain([xmin,xmax])
+                 .range([0,hist_width]);
+
+      // scale for the height of the bars
+      var y = d3.scale.linear()
+                .domain([0,d3.max(histdata,function(d){return d.numfill;})])
+                .range([hist_height,0]);
+
+      // create the x-axis
+      var xAxis = d3.svg.axis()
+                    .scale(x2)
+                    .orient("bottom");
+
+      // create the y-axis
+      var yAxis = d3.svg.axis()
+                    .scale(y)
+                    .ticks(8)
+                    .orient("left");
+
+      // append the svg canvas to the end of the body
+      var svg = d3.select("body").append("svg")
+                  .attr("width", hist_width + margin.left + margin.right)
+                  .attr("height", hist_height + margin.top + margin.bottom)
+                  .append("g")
+                  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      // set up the bars
+      var bar = svg.selectAll(".bar")
+                   .data(histdata)
+                   .enter().append("g")
+                   .attr("class","bar")
+                   .attr("transform", function(d, i) {
+                        // for each catching, console logging
+                        // console.log(d);
+                        // console.log("i",i);
+                        // console.log("i*binsize+minbin",i * binsize + minbin)
+                        // console.log("x2",x2(i * binsize + minbin))
+                        // console.log(d.numfill);
+                        // console.log(y(d.numfill));
+                        return "translate(" + x2(i * binsize + minbin) + "," + y(d.numfill) + ")"; });
+
+      // add rectangles of the correct size for each bar
+      bar.append("rect")
+         .attr("x", x(binmargin))
+         .attr("fill","#2980B9")
+         .attr("width", x(binsize - 2 * binmargin))
+         .attr("height", function(d) {
+           // for debugging, console logging
+          //  console.log("binsize",binsize);
+          //  console.log("binmargin",binmargin);
+          //  console.log("summation",binsize - 2 * binmargin)
+           return hist_height - y(d.numfill);
+         });
+
+      // add the x-axis
+      svg.append("g")
+         .attr("class","x axis")
+         .attr("transform", "translate(0," + hist_height + ")")
+         .call(xAxis);
+
+      // add the x-axis label
+      svg.append("text")
+         .attr("class","x label")
+         .attr("text-anchor", "middle")
+         .attr("x", hist_width/2)
+         .attr("y", hist_height + margin.bottom)
+         .text("Clinton Sentiment Distribution")
+
+      // add the y-axis
+      svg.append("g")
+         .attr("class", "y axis")
+         .attr("transform", "translate(0,0)")
+         .call(yAxis);
+
+    });
+
+// add the histogram for Trump
+// add the histogram for Clinton
+// populate the list of values into an array for each candidate
+var sentTrump = d3.csv("sent_Trump.csv", function(data) {
+    // load in the data
+    var values = [];
+
+    data.forEach(function(d) {
+      values.push(+d.Score);
+      });
+
+      // create an array to store the histogram data
+      var histdata = new Array(numbins);
+      for (var i=0; i<numbins; i++) {
+        histdata[i] = {numfill:0};
+      }
+
+      // loop through each data point and identify its appropriate bin
+      values.forEach(function(d) {
+        var bin = Math.floor((d - minbin)/binsize);
+        // provided that we actually got a bin, increment that bin count by
+        // one
+        if((bin.toString()!="NaN") && (bin < histdata.length)) {
+          histdata[bin].numfill += 1;
+        }
+      });
+
+      // x-scale for the width of the bins
+      var x = d3.scale.linear()
+                .domain([0,(xmax-xmin)])
+                .range([0,hist_width]);
+
+      // x-scale for the placement of the placement of the bars
+      var x2 = d3.scale.linear()
+                 .domain([xmin,xmax])
+                 .range([0,hist_width]);
+
+      // scale for the height of the bars
+      var y = d3.scale.linear()
+                .domain([0,d3.max(histdata,function(d){return d.numfill;})])
+                .range([hist_height,0]);
+
+      // create the x-axis
+      var xAxis = d3.svg.axis()
+                    .scale(x2)
+                    .orient("bottom");
+
+      // create the y-axis
+      var yAxis = d3.svg.axis()
+                    .scale(y)
+                    .ticks(8)
+                    .orient("left");
+
+      // append the svg canvas to the end of the body
+      var svg = d3.select("body").append("svg")
+                  .attr("width", hist_width + margin.left + margin.right)
+                  .attr("height", hist_height + margin.top + margin.bottom)
+                  .append("g")
+                  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      // set up the bars
+      var bar = svg.selectAll(".bar")
+                   .data(histdata)
+                   .enter().append("g")
+                   .attr("class","bar")
+                   .attr("transform", function(d, i) {
+                        // for each catching, console logging
+                        // console.log(d);
+                        // console.log("i",i);
+                        // console.log("i*binsize+minbin",i * binsize + minbin)
+                        // console.log("x2",x2(i * binsize + minbin))
+                        // console.log(d.numfill);
+                        // console.log(y(d.numfill));
+                        return "translate(" + x2(i * binsize + minbin) + "," + y(d.numfill) + ")"; });
+
+      // add rectangles of the correct size for each bar
+      bar.append("rect")
+         .attr("x", x(binmargin))
+         .attr("fill","#C94740")
+         .attr("width", x(binsize - 2 * binmargin))
+         .attr("height", function(d) {
+           // for debugging, console logging
+          //  console.log("binsize",binsize);
+          //  console.log("binmargin",binmargin);
+          //  console.log("summation",binsize - 2 * binmargin)
+           return hist_height - y(d.numfill);
+         });
+
+      // add the x-axis
+      svg.append("g")
+         .attr("class","x axis")
+         .attr("transform", "translate(0," + hist_height + ")")
+         .call(xAxis);
+
+      // add the x-axis label
+      svg.append("text")
+         .attr("class","x label")
+         .attr("text-anchor", "middle")
+         .attr("x", hist_width/2)
+         .attr("y", hist_height + margin.bottom)
+         .text("Trump Sentiment Distribution")
+
+      // add the y-axis
+      svg.append("g")
+         .attr("class", "y axis")
+         .attr("transform", "translate(0,0)")
+         .call(yAxis);
+
+    });
 
 </script>
 </body>
