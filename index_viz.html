@@ -167,7 +167,7 @@ var sentline = d3.svg.line()
 
 var sentline2 = d3.svg.line()
     .x(function(d) { return xScale(d.Date); })
-    .y(function(d) { return yScale(d.Avg_Score); })
+    .y(function(d) { return yScale(d.Score); })
     .interpolate("basis");
 
 // load data
