@@ -208,7 +208,46 @@ d3.csv("sentiment.csv", function(error, data) {
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("Score");
+  
+  // event markers
+  var debate1=parseDate("2016-09-26");
+  var debate2=parseDate("2016-10-09");
+  var debate3=parseDate("2016-10-19");
+  var grope=parseDate("2016-10-07");
+  var fall=parseDate("2016-09-11");
 
+  svg.append("line")
+      .attr("x1", xScale(debate1))
+      .attr("y1", yScale(0.62))
+      .attr("x2", xScale(debate1))
+      .attr("y2", yScale(0.7))
+      .style("stroke-width", 2)
+      .style("stroke", "#9FACB9")
+      .style("fill", "none");
+
+  svg.append("text")
+      .attr("x", xScale(debate1))
+      .attr("y", yScale(0.71))
+      .attr("text-anchor", "start")
+      .style("font-size", "16px")
+      .text("First Debate");
+
+  svg.append("line")
+      .attr("x1", xScale(fall))
+      .attr("y1", yScale(0.62))
+      .attr("x2", xScale(fall))
+      .attr("y2", yScale(0.7))
+      .style("stroke-width", 2)
+      .style("stroke", "#9FACB9")
+      .style("fill", "none");
+
+  svg.append("text")
+      .attr("x", xScale(fall))
+      .attr("y", yScale(0.71))
+      .attr("text-anchor", "start")
+      .style("font-size", "16px")
+      .text("Clinton's Fall");
+  
   // draw dots
   svg.selectAll(".dot")
       .data(data)
