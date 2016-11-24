@@ -266,6 +266,9 @@ d3.csv("sentiment.csv", function(error, data) {
        // make all dots but the selected dot invisible
        else {
 
+        svg.selectAll(".line2")
+          .attr("visibility", "hidden");
+
         svg.selectAll(".dot")
            .attr("visibility", "visible");
 
@@ -273,20 +276,18 @@ d3.csv("sentiment.csv", function(error, data) {
            .filter(function(d) {return selected != d.Source;})
            .attr("visibility", "hidden");
 
-        d3.csv("news_source.csv", function(data) {
-          data.forEach(function(d) {
-            d.Date = parseDate(d.Date);
-            d.Avg_Score = +d.Avg_Score;
+        data_selected = data.filter(function(row) {
+            return row['Source'] == selected;
           });
 
           // Scale the range of the data
-            xScale.domain(d3.extent(data, function(d) { return d.Date; }));
+            xScale.domain(d3.extent(data_selected, function(d) { return d.Date; }));
             yScale.domain([-1,1]);
 
             // Nest the entries by Candidate
             var dataNest = d3.nest()
                 .key(function(d) {return d.Candidate;})
-                .entries(data);
+                .entries(data_selected);
 
             // Loop through each Candidate / key and assign to line2 attribute
             // which is different from the axis and trend line for all
@@ -299,7 +300,6 @@ d3.csv("sentiment.csv", function(error, data) {
                     .style("stroke", function() { return d.color=color(d.key) });
 
                   });
-              });
             };
           });
 
