@@ -103,6 +103,14 @@ body {
           <option value="wsj.com">wsj.com</option>
           <option value="yahoo.com">yahoo.com</option>
       </select>
+    <br><br>
+
+    <div id="filter">
+      <b>Candidates: </b>
+      <input type="checkbox" name="Candidate" value="Trump" checked>Trump
+      <input type="checkbox" name="Candidate" value="Clinton" checked>Clinton
+    <br><br>
+    </div>
 
   </div>
 
@@ -112,6 +120,7 @@ body {
         <p><span id="node_date">DATE</span></p>
         <p>Sentiment: <span id="node_sentiment">SCORE</span></p>
         <p><em><span id="node_source">SOURCE</span></em></p>
+        <p>Count: <span id="node_count">COUNT</span></p>
   </div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -162,13 +171,13 @@ var svg = d3.select("body").append("svg")
 // Define the line
 var sentline = d3.svg.line()
     .x(function(d) { return xScale(d.Date); })
-    .y(function(d) { return yScale(d.Avg_Score); })
-    .interpolate("basis");
+    .y(function(d) { return yScale(d.Score); })
+    .interpolate("cardinal");
 
 var sentline2 = d3.svg.line()
     .x(function(d) { return xScale(d.Date); })
     .y(function(d) { return yScale(d.Score); })
-    .interpolate("basis");
+    .interpolate("cardinal");
 
 // load data
 d3.csv("sentiment.csv", function(error, data) {
@@ -177,6 +186,7 @@ d3.csv("sentiment.csv", function(error, data) {
   data.forEach(function(d) {
     d["Date"] = parseDate(d["Date"]);
     d["Score"] = +d["Score"];
+    d["Candidate"] = d["Candidate"];
 //    console.log(d);
   });
 
@@ -229,7 +239,7 @@ d3.csv("sentiment.csv", function(error, data) {
       .attr("x", xScale(debate1))
       .attr("y", yScale(0.61))
       .attr("text-anchor", "middle")
-      // .style("font-size", "16px")
+      //.style("font-size", "16px")
       .text("First Debate");
 
   svg.append("line")
@@ -245,7 +255,7 @@ d3.csv("sentiment.csv", function(error, data) {
       .attr("x", xScale(fall))
       .attr("y", yScale(0.61))
       .attr("text-anchor", "middle")
-      // .style("font-size", "16px")
+      //.style("font-size", "16px")
       .text("Clinton's Fall");
 
   // draw dots
@@ -319,9 +329,9 @@ d3.csv("sentiment.csv", function(error, data) {
             return row['Source'] == selected;
           });
 
-          // Scale the range of the data
-            xScale.domain(d3.extent(data_selected, function(d) { return d.Date; }));
-            yScale.domain([-1,1]);
+            //use original scale from scatter
+            xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+            yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
 
             // Nest the entries by Candidate
             var dataNest = d3.nest()
@@ -334,6 +344,7 @@ d3.csv("sentiment.csv", function(error, data) {
 
                 svg.append("path")
                     .attr("class", "line2")
+                    .attr("id", d.key)
                     .attr("d", sentline2(d.values))
                     .style("stroke-dasharray", ("5, 5"))
                     .style("stroke", function() { return d.color=color(d.key) });
@@ -345,7 +356,7 @@ d3.csv("sentiment.csv", function(error, data) {
   // draw legend
   var legend = svg.selectAll(".legend")
       .data(color.domain())
-    .enter().append("g")
+      .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
@@ -363,33 +374,55 @@ d3.csv("sentiment.csv", function(error, data) {
       .attr("dy", ".35em")
       .style("text-anchor", "end")
       .text(function(d) { return d;})
-});
 
-d3.csv("avg_sentiment.csv", function(data) {
-  data.forEach(function(d) {
-    d.Date = parseDate(d.Date);
-    d.Avg_Score = +d.Avg_Score;
+  d3.csv("avg_sentiment.csv", function(data_avg) {
+    data_avg.forEach(function(d) {
+      d.Date = parseDate(d.Date);
+      d.Score = +d.Score;
+      d.Candidate = d.Candidate;
+    });
+
+      //use original scale from scatter
+      xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+      yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
+
+      // Nest the entries by Candidate
+      var dataNest = d3.nest()
+          .key(function(d) {return d.Candidate;})
+          .entries(data_avg);
+
+      // Loop through each Candidate / key
+      dataNest.forEach(function(d) {
+
+          svg.append("path")
+              .attr("class", "line")
+              .attr("id", d.key)
+              .attr("d", sentline(d.values))
+              .style("stroke", function() { return d.color=color(d.key) });
+
+      });
   });
 
-  // Scale the range of the data
-    xScale.domain(d3.extent(data, function(d) { return d.Date; }));
-    yScale.domain([-1,1]);
+  d3.selectAll("input[name=Candidate]").on("change", function() {
+    var selected_candidate = this.value;
+    display = this.checked ? "inline" : "none";
 
-    // Nest the entries by Candidate
-    var dataNest = d3.nest()
-        .key(function(d) {return d.Candidate;})
-        .entries(data);
+    svg.selectAll(".dot")
+      .filter(function(d) { return selected_candidate == d.Candidate })
+      .attr("display", display);
 
-    // Loop through each Candidate / key
-    dataNest.forEach(function(d) {
+      if (selected_candidate=='Clinton') {
+        svg.selectAll("#Clinton")
+        .attr("display", display);
+      } else if (selected_candidate=='Trump') {
+        svg.selectAll("#Trump")
+        .attr("display", display);
+      }
 
-        svg.append("path")
-            .attr("class", "line")
-            .attr("d", sentline(d.values))
-            .style("stroke", function() { return d.color=color(d.key) });
-
-    });
+  });
 });
+
+
 
 // set the maximum and minimum bins, we set this as a constant because
 // there is a solid max and minimum to the sentiment scores
