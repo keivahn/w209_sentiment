@@ -187,6 +187,7 @@ d3.csv("sentiment.csv", function(error, data) {
     d["Date"] = parseDate(d["Date"]);
     d["Score"] = +d["Score"];
     d["Candidate"] = d["Candidate"];
+    d["Count"] = +d["Count"];
 //    console.log(d);
   });
 
@@ -289,6 +290,10 @@ d3.csv("sentiment.csv", function(error, data) {
           d3.select("#tooltip")
             .select("#node_date")
             .text(formatDate(d.Date));
+
+          d3.select("#tooltip")
+            .select("#node_count")
+            .text(d.Count.toFixed(0))
 
           d3.select("#tooltip").classed("hidden",false);
       })
