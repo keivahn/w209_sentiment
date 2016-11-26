@@ -2,8 +2,8 @@ import pandas as pd
 import psycopg2
 
 ##connect to db
-conn = psycopg2.connect(database="election", user="elections", password="election2016", 
-                        host="ec2-54-208-219-223.compute-1.amazonaws.com", port="5432")
+conn = psycopg2.connect(database="", user="", password="", 
+                        host="", port="")
 
 ## Query to get data where relevancy score is higher than 0.6
 cur = conn.cursor()
