@@ -180,7 +180,7 @@ var sentline2 = d3.svg.line()
     .interpolate("cardinal");
 
 // load data
-d3.csv("sentiment_agg", function(error, data) {
+d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data) {
 
   // change string (from CSV) into number format
   data.forEach(function(d) {
