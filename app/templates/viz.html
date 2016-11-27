@@ -180,7 +180,7 @@ var sentline2 = d3.svg.line()
     .interpolate("cardinal");
 
 // load data
-d3.csv("sentiment.csv", function(error, data) {
+d3.csv("sentiment_agg", function(error, data) {
 
   // change string (from CSV) into number format
   data.forEach(function(d) {
@@ -380,7 +380,7 @@ d3.csv("sentiment.csv", function(error, data) {
       .style("text-anchor", "end")
       .text(function(d) { return d;})
 
-  d3.csv("avg_sentiment.csv", function(data_avg) {
+  d3.csv("{{ url_for('static', filename='avg_sentiment.csv') }}", function(data_avg) {
     data_avg.forEach(function(d) {
       d.Date = parseDate(d.Date);
       d.Score = +d.Score;
@@ -448,7 +448,7 @@ var hist_height = height/3;
 
 // add the histogram for Clinton
 // populate the list of values into an array for each candidate
-var sentClinton = d3.csv("sent_clinton.csv", function(data) {
+var sentClinton = d3.csv("{{ url_for('static', filename='sent_clinton.csv') }}", function(data) {
     // load in the data
     var values = [];
 
@@ -558,7 +558,7 @@ var sentClinton = d3.csv("sent_clinton.csv", function(data) {
 // add the histogram for Trump
 // add the histogram for Clinton
 // populate the list of values into an array for each candidate
-var sentTrump = d3.csv("sent_trump.csv", function(data) {
+var sentTrump = d3.csv("{{ url_for('static', filename='sent_trump.csv') }}", function(data) {
     // load in the data
     var values = [];
 
