@@ -106,9 +106,9 @@ body {
     <br><br>
 
     <div id="filter">
-      <b>Candidates: </b>
-      <input type="checkbox" name="Candidate" value="Trump" checked>Trump
-      <input type="checkbox" name="Candidate" value="Clinton" checked>Clinton
+      <b>candidates: </b>
+      <input type="checkbox" name="candidate" value="Trump" checked>Trump
+      <input type="checkbox" name="candidate" value="Clinton" checked>Clinton
     <br><br>
     </div>
 
@@ -117,10 +117,10 @@ body {
   <!-- tooltip for when hovering over bars -->
   <div id="tooltip" class="hidden">
         <p><strong><span id="node_candidate">NAME</span></strong></p>
-        <p><span id="node_date">DATE</span></p>
-        <p>Sentiment: <span id="node_sentiment">SCORE</span></p>
-        <p><em><span id="node_source">SOURCE</span></em></p>
-        <p>Count: <span id="node_count">COUNT</span></p>
+        <p><span id="node_date">date</span></p>
+        <p>Sentiment: <span id="node_sentiment">score</span></p>
+        <p><em><span id="node_source">source</span></em></p>
+        <p>count: <span id="node_count">count</span></p>
   </div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -140,23 +140,23 @@ var hover_pad = 45;
  */
 
 // setup x
-var  xValue = function(d) { return d["Date"];}, // data -> value
+var  xValue = function(d) { return d["date"];}, // data -> value
      xScale = d3.time.scale().range([0, width]), // value -> display
      xMap = function(d) { return xScale(xValue(d));}, // data -> display
      xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 // setup y
-var yValue = function(d) { return d["Score"];}, // data -> value
+var yValue = function(d) { return d["score"];}, // data -> value
     yScale = d3.scale.linear().range([height, 0]), // value -> display
     yMap = function(d) { return yScale(yValue(d));}, // data -> display
     yAxis = d3.svg.axis().scale(yScale).orient("left");
 
 // define date format
-var parseDate = d3.time.format("%Y-%m-%d").parse;
-var formatDate = d3.time.format("%b %d, %Y");
+var parsedate = d3.time.format("%Y-%m-%d").parse;
+var formatdate = d3.time.format("%b %d, %Y");
 
 // setup fill color
-var cValue = function(d) { return d.Candidate;},
+var cValue = function(d) { return d.candidate;},
     color = d3.scale.ordinal()
       .domain(["Clinton", "Trump"])
       .range(["#2980B9", "#C94740"]);
@@ -170,13 +170,13 @@ var svg = d3.select("body").append("svg")
 
 // Define the line
 var sentline = d3.svg.line()
-    .x(function(d) { return xScale(d.Date); })
-    .y(function(d) { return yScale(d.Score); })
+    .x(function(d) { return xScale(d.date); })
+    .y(function(d) { return yScale(d.score); })
     .interpolate("cardinal");
 
 var sentline2 = d3.svg.line()
-    .x(function(d) { return xScale(d.Date); })
-    .y(function(d) { return yScale(d.Score); })
+    .x(function(d) { return xScale(d.date); })
+    .y(function(d) { return yScale(d.score); })
     .interpolate("cardinal");
 
 // load data
@@ -184,10 +184,10 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   // change string (from CSV) into number format
   data.forEach(function(d) {
-    d["Date"] = parseDate(d["Date"]);
-    d["Score"] = +d["Score"];
-    d["Candidate"] = d["Candidate"];
-    d["Count"] = +d["Count"];
+    d["date"] = parsedate(d["date"]);
+    d["score"] = +d["score"];
+    d["candidate"] = d["candidate"];
+    d["count"] = +d["count"];
 //    console.log(d);
   });
 
@@ -205,7 +205,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
-      .text("Date");
+      .text("date");
 
   // y-axis
   svg.append("g")
@@ -218,14 +218,14 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .attr("x", 30)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Score");
+      .text("score");
 
   // event markers
-  var debate1=parseDate("2016-09-26");
-  var debate2=parseDate("2016-10-09");
-  var debate3=parseDate("2016-10-19");
-  var grope=parseDate("2016-10-07");
-  var fall=parseDate("2016-09-11");
+  var debate1=parsedate("2016-09-26");
+  var debate2=parsedate("2016-10-09");
+  var debate3=parsedate("2016-10-19");
+  var grope=parsedate("2016-10-07");
+  var fall=parsedate("2016-09-11");
 
   svg.append("line")
       .attr("x1", xScale(debate1))
@@ -277,23 +277,23 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
             .style("left",xPosition + "px")
             .style("top",yPosition + "px")
             .select("#node_candidate")
-            .text(d.Candidate);
+            .text(d.candidate);
 
           d3.select("#tooltip")
             .select("#node_sentiment")
-            .text(d.Score.toFixed(3));
+            .text(d.score.toFixed(3));
 
           d3.select("#tooltip")
             .select("#node_source")
-            .text(d.Source);
+            .text(d.source);
 
           d3.select("#tooltip")
             .select("#node_date")
-            .text(formatDate(d.Date));
+            .text(formatdate(d.date));
 
           d3.select("#tooltip")
             .select("#node_count")
-            .text(d.Count.toFixed(0))
+            .text(d.count.toFixed(0))
 
           d3.select("#tooltip").classed("hidden",false);
       })
@@ -327,23 +327,23 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
            .attr("visibility", "visible");
 
         svg.selectAll(".dot")
-           .filter(function(d) {return selected != d.Source;})
+           .filter(function(d) {return selected != d.source;})
            .attr("visibility", "hidden");
 
         data_selected = data.filter(function(row) {
-            return row['Source'] == selected;
+            return row['source'] == selected;
           });
 
             //use original scale from scatter
             xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
             yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
 
-            // Nest the entries by Candidate
+            // Nest the entries by candidate
             var dataNest = d3.nest()
-                .key(function(d) {return d.Candidate;})
+                .key(function(d) {return d.candidate;})
                 .entries(data_selected);
 
-            // Loop through each Candidate / key and assign to line2 attribute
+            // Loop through each candidate / key and assign to line2 attribute
             // which is different from the axis and trend line for all
             dataNest.forEach(function(d) {
 
@@ -382,21 +382,21 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   d3.csv("{{ url_for('static', filename='avg_sentiment.csv') }}", function(data_avg) {
     data_avg.forEach(function(d) {
-      d.Date = parseDate(d.Date);
-      d.Score = +d.Score;
-      d.Candidate = d.Candidate;
+      d.date = parsedate(d.date);
+      d.score = +d.score;
+      d.candidate = d.candidate;
     });
 
       //use original scale from scatter
       xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
       yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
 
-      // Nest the entries by Candidate
+      // Nest the entries by candidate
       var dataNest = d3.nest()
-          .key(function(d) {return d.Candidate;})
+          .key(function(d) {return d.candidate;})
           .entries(data_avg);
 
-      // Loop through each Candidate / key
+      // Loop through each candidate / key
       dataNest.forEach(function(d) {
 
           svg.append("path")
@@ -408,12 +408,12 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       });
   });
 
-  d3.selectAll("input[name=Candidate]").on("change", function() {
+  d3.selectAll("input[name=candidate]").on("change", function() {
     var selected_candidate = this.value;
     display = this.checked ? "inline" : "none";
 
     svg.selectAll(".dot")
-      .filter(function(d) { return selected_candidate == d.Candidate })
+      .filter(function(d) { return selected_candidate == d.candidate })
       .attr("display", display);
 
       if (selected_candidate=='Clinton') {
@@ -453,7 +453,7 @@ var sentClinton = d3.csv("{{ url_for('static', filename='sent_clinton.csv') }}",
     var values = [];
 
     data.forEach(function(d) {
-      values.push(+d.Score);
+      values.push(+d.score);
       });
 
       // create an array to store the histogram data
@@ -563,7 +563,7 @@ var sentTrump = d3.csv("{{ url_for('static', filename='sent_trump.csv') }}", fun
     var values = [];
 
     data.forEach(function(d) {
-      values.push(+d.Score);
+      values.push(+d.score);
       });
 
       // create an array to store the histogram data
