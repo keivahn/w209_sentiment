@@ -52,7 +52,12 @@ body {
         font-size: 12px;
         line-height: 14px;
       }
-
+#filter2.hidden {
+  visibility: hidden;
+}
+#filter {
+  margin-right: 50px;
+}
 /* Styling for line*/
 .line {
     stroke: steelblue;
@@ -67,9 +72,16 @@ body {
     fill: none;
 }
 
+.line3 {
+    stroke: steelblue;
+    stroke-width: 5;
+    fill: none;
+}
+
 </style>
 <body>
-  <div id="filter">
+<form>
+  <label id="filter">
       <strong>News source:</strong>
 
       <select id="news-sources" name="news-sources">
@@ -103,14 +115,58 @@ body {
           <option value="wsj.com">wsj.com</option>
           <option value="yahoo.com">yahoo.com</option>
       </select>
+    </label>
+  <label id="filter2" class="hidden">
+      <strong>2nd News source:</strong>
+
+      <select id="news-sources2" name="news-sources2">
+          <option value="Select">Select</option>
+          <option value="ap.org">ap.org</option>
+          <option value="bloomberg.com">bloomberg.com</option>
+          <option value="breitbart.com">breitbart.com</option>
+          <option value="cadillacnews.com">cadillacnews.com</option>
+          <option value="cbsnews.com">cbsnews.com</option>
+          <option value="chicagotribune.com">chicagotribune.com</option>
+          <option value="cnn.com">cnn.com</option>
+          <option value="democraticunderground.com">democraticunderground.com</option>
+          <option value="foxnews.com">foxnews.com</option>
+          <option value="freerepublic.com">freerepublic.com</option>
+          <option value="gazette.com">gazette.com</option>
+          <option value="huffingtonpost.com">huffingtonpost.com</option>
+          <option value="msn.com">msn.com</option>
+          <option value="msnbc.com">msnbc.com</option>
+          <option value="mysanantonio.com">mysanantonio.com</option>
+          <option value="newsmax.com">newsmax.com</option>
+          <option value="patch.com">patch.com</option>
+          <option value="reuters.com">reuters.com</option>
+          <option value="srnnews.com">srnnews.com</option>
+          <option value="tbo.com">tbo.com</option>
+          <option value="thehill.com">thehill.com</option>
+          <option value="theweek.com">theweek.com</option>
+          <option value="time.com">time.com</option>
+          <option value="townhall.com">townhall.com</option>
+          <option value="washingtonpost.com">washingtonpost.com</option>
+          <option value="washingtontimes.com">washingtontimes.com</option>
+          <option value="wsj.com">wsj.com</option>
+          <option value="yahoo.com">yahoo.com</option>
+      </select>
+    </label>
     <br><br>
+  
 
     <div id="check_filter">
       <b>Candidates: </b>
-      <input type="checkbox" name="Candidate" value="Trump" checked>Trump
-      <input type="checkbox" name="Candidate" value="Clinton" checked>Clinton
+      <input type="checkbox" name="Candidate" id="Trump_check" value="Trump" checked>Trump
+      <input type="checkbox" name="Candidate" id="Clinton_check" value="Clinton" checked>Clinton
     <br><br>
     </div>
+
+    <div id="check_filter">
+      <b>Average Trend Line: </b>
+      <input type="checkbox" name="Average_Trend" value="Line" checked> Enabled
+    <br><br>
+    </div>
+
 
   </div>
 
@@ -120,14 +176,15 @@ body {
         <p><span id="node_date">DATE</span></p>
         <p>Sentiment: <span id="node_sentiment">SCORE</span></p>
         <p><em><span id="node_source">SOURCE</span></em></p>
-        <p>Count: <span id="node_count">COUNT</span></p>
+        <p># of Articles: <span id="node_count">COUNT</span></p>
   </div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
 
 <script>
 var margin = {top: 20, right: 20, bottom: 40, left: 60},
-    width = 1100 - margin.left - margin.right,
+    width = 1300 - margin.left - margin.right,
     height = 800 - margin.top - margin.bottom;
 
 var hover_pad = 45;
@@ -170,11 +227,6 @@ var svg = d3.select("body").append("svg")
 
 // Define the line
 var sentline = d3.svg.line()
-    .x(function(d) { return xScale(d.Date); })
-    .y(function(d) { return yScale(d.Score); })
-    .interpolate("cardinal");
-
-var sentline2 = d3.svg.line()
     .x(function(d) { return xScale(d.Date); })
     .y(function(d) { return yScale(d.Score); })
     .interpolate("cardinal");
@@ -257,7 +309,7 @@ d3.csv("sentiment.csv", function(error, data) {
       .attr("y", yScale(0.61))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
-      .text("Clinton's Fall");
+      .text("Clinton Faints at 9/11 Memorial");
 
   // draw dots
   svg.selectAll(".dot")
@@ -302,10 +354,59 @@ d3.csv("sentiment.csv", function(error, data) {
       });
 
   var dropDown = d3.select("#news-sources");
+  var dropDown2 = d3.select("#news-sources2");
+
+  dropDown2.on("change", function() {
+       var selected2 = this.value;
+       var selected = $('#filter').find(":selected").text();
+
+       $("#filter").prop("disabled", false);
+       $("#filter").find("option[value='" + selected2 + "']").prop("disabled", true);
+
+       svg.selectAll(".dot")
+          .attr("visibility", "hidden");
+
+       svg.selectAll(".line3")
+          .attr("visibility", "hidden");
+   
+       svg.selectAll(".dot")
+          .filter(function(d) { return selected2 == d.Source || selected == d.Source; })
+          .attr("visibility", "visible");
+
+        data_selected = data.filter(function(row) {
+            return row['Source'] == selected2;
+          });
+
+            //use original scale from scatter
+            xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+            yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
+
+            // Nest the entries by Candidate
+            var dataNest = d3.nest()
+                .key(function(d) {return d.Candidate;})
+                .entries(data_selected);
+
+            // Loop through each Candidate / key and assign to line2 attribute
+            // which is different from the axis and trend line for all
+            dataNest.forEach(function(d) {
+
+                svg.append("path")
+                    .attr("class", "line3")
+                    .attr("id", d.key)
+                    .attr("d", sentline(d.values))
+                    .attr("visibility", function () { 
+                      if($('#' + d.key + '_check').is(":checked")) {
+                        return "visible"
+                      } 
+                      else { return "hidden"}  } )
+                    .style("stroke-dasharray", ("3, 6"))
+                    .style("stroke", function() { return d.color=color(d.key) });
+
+                  });
+            });
 
   dropDown.on("change", function() {
        var selected = this.value;
-
        // make all dots visible if the user has selected "All"
        if(selected == 'All'){
          svg.selectAll(".dot")
@@ -313,6 +414,12 @@ d3.csv("sentiment.csv", function(error, data) {
 
           svg.selectAll(".line2")
             .attr("visibility", "hidden");
+          
+          svg.selectAll(".line3")
+            .attr("visibility", "hidden");
+
+
+          $("#filter2.hidden").css("visibility", "hidden");
           }
 
        // make only the appropriate dot visible if the user has
@@ -325,6 +432,11 @@ d3.csv("sentiment.csv", function(error, data) {
 
         svg.selectAll(".dot")
            .attr("visibility", "visible");
+
+        $("#filter2.hidden").css("visibility", "visible");
+        $("select option").prop("disabled", false);
+        $("#filter2.hidden").find("option[value='" + "Select" + "']").hide();
+        $("#filter2.hidden").find("option[value='" + selected + "']").prop("disabled", true);
 
         svg.selectAll(".dot")
            .filter(function(d) {return selected != d.Source;})
@@ -350,7 +462,12 @@ d3.csv("sentiment.csv", function(error, data) {
                 svg.append("path")
                     .attr("class", "line2")
                     .attr("id", d.key)
-                    .attr("d", sentline2(d.values))
+                    .attr("d", sentline(d.values))
+                    .attr("visibility", function () { 
+                      if($('#' + d.key + '_check').is(":checked")) {
+                        return "visible"
+                      } 
+                      else { return "hidden"}  } )
                     .style("stroke-dasharray", ("5, 5"))
                     .style("stroke", function() { return d.color=color(d.key) });
 
@@ -641,6 +758,7 @@ d3.csv("sentiment.csv", function(error, data) {
   d3.selectAll("input[name=Candidate]").on("change", function() {
     var selected_candidate = this.value;
     display = this.checked ? "inline" : "none";
+    display_line = this.checked ? "visible" : "hidden";
 
     svg.selectAll(".dot")
       .filter(function(d) { return selected_candidate == d.Candidate })
@@ -648,13 +766,21 @@ d3.csv("sentiment.csv", function(error, data) {
 
       if (selected_candidate=='Clinton') {
         svg.selectAll("#Clinton")
-        .attr("display", display);
+        .attr("visibility", display_line);
       } else if (selected_candidate=='Trump') {
         svg.selectAll("#Trump")
-        .attr("display", display);
+        .attr("visibility", display_line);
       }
 
   });
+
+  d3.selectAll("input[name=Average_Trend]").on("change", function() {
+    display = this.checked ? "inline" : "none";
+
+    svg.selectAll(".line")
+       .attr("display", display);
+  });
+
 });
 
 
