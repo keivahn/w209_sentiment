@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<style>
+
+#NavBar {
+  font-size: 10pt;
+  font-family: "Alfa Slab One",Impact,sans-serif;
+  color: #FFFFFF;
+  background-color: rgba(72,74,74,0.8);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+#NavRight {
+  display: inline-block;
+  float: right;
+}
+
+#NavBar a {
+  text-decoration: none;
+  padding-left: 0;
+  padding-right: 50px;
+}
+
+#introImage {
+  font-size: 50pt;
+  font-family: "Alfa Slab One";
+  background-image: url(bgimage.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+#title {
+  color: #FFFFFF;
+  text-align: center;
+  margin-left: 125px;
+  margin-right: 125px;
+  background-color: rgba(0,0,0,0.1);
+}
+
+.heading {
+  font-family: "Alfa Slab One";
+  font-size: 20pt;
+  text-align: center;
+}
+
+#Section1 {
+  background-color: #C94740;
+  color: #FFFFFF;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 30px;
+  padding-bottom: 100px;
+}
+
+#Section2 {
+  background-color: #2980B9;
+  color: #FFFFFF;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 30px;
+  padding-bottom: 100px;
+}
+
+#Section3 {
+  background-color: #FFFFFF;
+  color: #484A4A;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 30px;
+  padding-bottom: 100px;
+}
+
+#Section4 {
+  background-color: #484A4A;
+  color: #FFFFFF;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 30px;
+  padding-bottom: 100px;
+}
+
+#Section5 {
+  background-color: #C94740;
+  color: #FFFFFF;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 30px;
+  padding-bottom: 100px;
+}
+
+body {
+  margin:0;
+  font-family: "Open Sans Condensed","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 16pt;
+  text-align: justify;
+}
+
+body a {
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+.centered {
+  text-align: center;
+}
+
+</style>
+
+<head>
+  <title>Visualizing 2016 Media Sentiment</title>
+  <link href="https://fonts.googleapis.com/css?family=Alfa+Slab+One|Open+Sans+Condensed:300" rel="stylesheet">
+</head>
+
+<body>
+
+  <div id="NavBar">
+    <a href="#top">Visualizing 2016 Media Sentiment</a>
+    <div id="NavRight">
+      <a href="#Section1">Problem</a>
+      <a href="#Section2">Solution</a>
+      <a href="#Section3">Try it out</a>
+      <a href="#Section4">Methodology</a>
+      <a href="#Section5">Meet the team</a>
+    </div>
+  </div>
+
+  <div id="top"></div>
+
+  <div id="introImage">
+    <p id="title">Visualizing 2016 Media Sentiment</p>
+  </div>
+
+  <div id="Section1">
+    <p class="heading">☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆</p>
+    <p class="heading">Problem</p>
+    <p>The 2016 American election has been one of the most polarizing. Since
+    popular election for Senators began in 1914, 2016 is the
+    <a href="http://fivethirtyeight.com/features/there-were-no-purple-states-on-tuesday/" target="_blank">
+    first year</a> that the same party has won both the Senate seat and the
+    Presidential electors for <em>every</em> single state. We are increasingly
+    living in a world of our own creation. We create our own
+    <a href="http://graphics.wsj.com/blue-feed-red-feed/" target="_blank">echo chambers</a> and
+    rarely understand the information we consume in its broader context. This is
+    dangerous because we begin to believe that our echo chamber is actually the
+    the reality we live in. When we get a glimpse of the reality, it can often
+    come as a <a href="http://www.businessinsider.com/donald-trump-wins-election-results-2016-11"
+    target="_blank">huge shock.</a></p>
+    <p>This problem is further compounded by the plethora of scandals, embarassing
+    debate performances, and other significant that stick in people's minds due
+    to the <a href="https://en.wikipedia.org/wiki/Availability_heuristic">recency
+    heuristic</a> and <a href="https://en.wikipedia.org/wiki/Anchoring">anchoring biases</a>
+    people use when making decisions. People are more likely to remember recent events
+    and anchor to them when making decisions. In an election cycle with many such
+    significant events, it becomes important to understand how these events influence
+    sentiment.</p>
+  </div>
+
+  <div id="Section2">
+    <p class="heading">☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆</p>
+    <p class="heading">Solution</p>
+    We need a solution that addresses the problem of the echno chamber and helps
+    individuals understand how key events affect biases of their news sources.
+    We offer a partial solution to this echo chamber problem. By visualizing the
+    basic sentiment of your news sources, we can begin to understand the echo
+    chambers we live in. For example, if my favorite news sources are <em>The
+    New York Times</em> and <em>The Huffington Post</em>, I can begin to see how
+    these news sources discuss the 2016 presidential candidates in the broader media
+    landscape. This tool will not remove the problem of echo chambers. However,
+    this tool will give us a greater awareness of the echo chambers we inhabit.
+    Additionally, we have the opportunity to visually show how key events swayed
+    the media towards or against the candidates inside and outside of our echo
+    chambers.
+  </div>
+
+  <div id="Section3">
+    <p class="heading">☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆</p>
+    <p class="heading">Try it out</p>
+    <p>
+      <object type="text/html" data="index_viz.html" width="1200" height ="1200">
+      </object>
+    </p>
+  </div>
+
+  <div id="Section4">
+    <p class="heading">☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆</p>
+    <p class="heading">Methodology</p>
+    <p>
+      Insert methodology here with links to IBM's watson.
+    </p>
+  </div>
+
+  <div id="Section5">
+    <p class="heading">☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆</p>
+    <p class="heading">Meet the team</p>
+    We are students enrolled in UC Berkeley's Master of Information and Data
+    Science program. This project is the cumulination of a semester long class
+    visualizing and communicating with data (<a
+    href="https://www.ischool.berkeley.edu/courses/datasci/209" target="_blank">W209
+    - Data Visualization and Communication</a>).
+    <p>
+    <div class="centered">
+      <a href="https://ca.linkedin.com/in/darren-lin-1a829920" target="_blank">Darren&nbspLin</a> &nbsp &nbsp
+      <a href="https://www.linkedin.com/in/sho-ohata-25847520" target="_blank">Sho&nbspOhata</a> &nbsp &nbsp
+      <a href="https://www.linkedin.com/in/alexksmith" target="_blank">Alex&nbspKeivahn&nbspSmith</a> &nbsp &nbsp
+      <a href="https://www.linkedin.com/in/jackywzhang" target="_blank">Jacky&nbspZhang</a> &nbsp &nbsp
+    </div>
+    </p>
+
+  </div>
+
+</body>
+
+</html>
