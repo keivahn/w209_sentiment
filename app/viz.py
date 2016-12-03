@@ -43,5 +43,6 @@ def hist_data():
     print(sql)
     curs.execute(sql)
     d = curs.fetchall()
+    print(d)
     fields = ('bin', 'sum')
     return jsonify(data=d)
