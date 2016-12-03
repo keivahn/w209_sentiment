@@ -155,20 +155,19 @@ body {
 
 
     <div id="check_filter">
-      <b>candidates: </b>
+      <b>Candidates: </b>
       <input type="checkbox" name="candidate" id="Trump_check" value="Trump" checked>Trump
       <input type="checkbox" name="candidate" id="Clinton_check" value="Clinton" checked>Clinton
     <br><br>
     </div>
 
-    <div id="check_filter">
+    <div id="check_filter2">
       <b>Average Trend Line: </b>
       <input type="checkbox" name="Average_Trend" value="Line" checked> Enabled
     <br><br>
     </div>
 
-
-  </div>
+  </form>
 
   <!-- tooltip for when hovering over bars -->
   <div id="tooltip" class="hidden">
@@ -184,7 +183,7 @@ body {
 
 <script>
 var margin = {top: 20, right: 20, bottom: 40, left: 60},
-    width = 1300 - margin.left - margin.right,
+    width = 1100 - margin.left - margin.right,
     height = 800 - margin.top - margin.bottom;
 
 var hover_pad = 45;
@@ -236,7 +235,6 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   // change string (from CSV) into number format
   data.forEach(function(d) {
-    console.log(d);
     d["date"] = parsedate(d["date"]);
     d["score"] = +d["score"];
     d["candidate"] = d["candidate"];
@@ -274,11 +272,33 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .text("score");
 
   // event markers
+  var basket = parsedate("2016-09-09");
   var debate1=parsedate("2016-09-26");
   var debate2=parsedate("2016-10-09");
   var debate3=parsedate("2016-10-19");
   var grope=parsedate("2016-10-07");
   var fall=parsedate("2016-09-11");
+
+  // 9 September 2016: Clinton calls Trump supporters a 'basket of deplorables'
+  // 28 October 2016: FBI begins second investigation in Clinton emails
+  // 2 November 2016: Woman accuses Trump of child rape
+  // 6 November 2016: FBI clears Clinton of email scandal
+
+  svg.append("line")
+      .attr("x1", xScale(basket))
+      .attr("y1", yScale(-0.7))
+      .attr("x2", xScale(basket))
+      .attr("y2", yScale(0.54))
+      .style("stroke-width", 2)
+      .style("stroke", "#9FACB9")
+      .style("fill", "none");
+
+  svg.append("text")
+      .attr("x", xScale(basket))
+      .attr("y", yScale(0.55))
+      .attr("text-anchor", "middle")
+      //.style("font-size", "16px")
+      .text("Clinton's basket of deplorables comment");
 
   svg.append("line")
       .attr("x1", xScale(debate1))
@@ -556,7 +576,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
                               var svg = d3.select("body").append("svg")
                                           .attr("class","histograms")
                                           .attr("width", hist_width + margin.left + margin.right)
-                                          .attr("height", hist_height + margin.top + margin.bottom)
+                                          .attr("height", hist_height + margin.top + margin.bottom+275)
                                           .append("g")
                                           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -607,6 +627,10 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
                                 .attr("class", "y axis")
                                 .attr("transform", "translate(0,0)")
                                 .call(yAxis);
+
+                              // rotate the histogram
+                              svg.attr("transform","rotate(90 140 200)");
+
                                 }
                             });
 

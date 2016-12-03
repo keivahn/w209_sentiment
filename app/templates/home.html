@@ -77,6 +77,15 @@
   padding-bottom: 100px;
 }
 
+#Section2-5 {
+  background-color: #484A4A;
+  color: #FFFFFF;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 30px;
+  padding-bottom: 100px;
+}
+
 #Section3 {
   background-color: #FFFFFF;
   color: #484A4A;
@@ -157,12 +166,12 @@ body a {
     living in a world of our own creation. We create our own
     <a href="http://graphics.wsj.com/blue-feed-red-feed/" target="_blank">echo chambers</a> and
     rarely understand the information we consume in its broader context. This is
-    dangerous because we begin to believe that our echo chamber is actually the
+    dangerous because we begin to believe that our echo chamber is actually
     the reality we live in. When we get a glimpse of the reality, it can often
     come as a <a href="http://www.businessinsider.com/donald-trump-wins-election-results-2016-11"
     target="_blank">huge shock.</a></p>
     <p>This problem is further compounded by the plethora of scandals, embarassing
-    debate performances, and other significant that stick in people's minds due
+    debate performances, and other significant events that stick in people's minds due
     to the <a href="https://en.wikipedia.org/wiki/Availability_heuristic">recency
     heuristic</a> and <a href="https://en.wikipedia.org/wiki/Anchoring">anchoring biases</a>
     people use when making decisions. People are more likely to remember recent events
@@ -174,7 +183,7 @@ body a {
   <div id="Section2">
     <p class="heading">☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆</p>
     <p class="heading">Solution</p>
-    We need a solution that addresses the problem of the echno chamber and helps
+    We need a solution that addresses the problem of the echo chamber and helps
     individuals understand how key events affect biases of their news sources.
     We offer a partial solution to this echo chamber problem. By visualizing the
     basic sentiment of your news sources, we can begin to understand the echo
@@ -186,6 +195,24 @@ body a {
     Additionally, we have the opportunity to visually show how key events swayed
     the media towards or against the candidates inside and outside of our echo
     chambers.
+  </div>
+
+  <div id="Section2-5">
+    <p class="heading">☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆</p>
+    <p class="heading">What is sentiment?</p>
+    In this context, sentiment is the general positive or negative tone of an
+    article. The sentiment scores were produced by
+    <a href="https://www.ibm.com/blogs/bluemix/2016/06/cognitive-apis-with-watson-sentiment-analysis/"
+    target="_blank">IBM's Watson</a>. Sentiment scores are centered at 0, which
+    is neutral. Sentiment scores of 1 are very positive, and sentiment scores of
+    -1 are very negative. For example, an article about Hilary Clinton
+    that has a 0.25 sentiment score is a slightly positive article about Hilary Clinton.
+    It is important to caveat here that a positive sentiment score does not necessarily
+    mean that the article supports Hilary Clinton. In the same sense, an article
+    with a negative sentiment score about Donald Trump is not necessarily criticizing
+    Donald Trump. However, we can make inferences about a news source's biases
+    based on the sentiment (in aggregate) of the articles they publish about a
+    given candidate. 
   </div>
 
   <div id="Section3">
@@ -201,7 +228,19 @@ body a {
     <p class="heading">☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆</p>
     <p class="heading">Methodology</p>
     <p>
-      Insert methodology here with links to IBM's watson.
+      <a href="https://www.ibm.com/watson/developercloud/alchemy-data-news.html"
+      target="_blank">AlchemyData News</a>,
+      a part of IBM's Watson Developer Cloud, gathers and analyzes between 250K
+      and 300K English news articles and blog posts every day. We queried AlchemyData News
+      for the two major candidates (Donald Trump and Hilary Clinton) every day
+      during the fall of 2016. Due to the extensive amount of data, we focused on only
+      the top 25 news producing sources. To further simplify the visualization,
+      we summarized the data for each news source by day by taking the average
+      of the sentiment scores. We plotted the averages in a scatterplot over time.
+      However, because when taking averages, we lose some of the granularity of
+      the individual data points, we also decided to include histograms that showed
+      the distribution of scores for each news source. We support this website on
+      a <a href="http://flask.pocoo.org/" target="_blank">Flask</a> webserver.
     </p>
   </div>
 
@@ -209,7 +248,7 @@ body a {
     <p class="heading">☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆</p>
     <p class="heading">Meet the team</p>
     We are students enrolled in UC Berkeley's Master of Information and Data
-    Science program. This project is the cumulination of a semester long class
+    Science program. This project is the culmination of a semester long class
     visualizing and communicating with data (<a
     href="https://www.ischool.berkeley.edu/courses/datasci/209" target="_blank">W209
     - Data Visualization and Communication</a>).
