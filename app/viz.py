@@ -1,10 +1,11 @@
 from __future__ import division
 
-from flask import render_template, redirect, flash, request, jsonify, url_for, Response
+from flask import render_template, request, Response, jsonify
 from app import app
 
 import json
 import psycopg2
+import psycopg2.extras
 
 
 @app.route('/index')
@@ -19,20 +20,28 @@ def viz():
 
 def to_csv(d, fields):
     d.insert(0, fields)
-    return Response('\n'.join([",".join(e) for e in d]), mimetype='text/csv')
+    return Response('\n'.join([",".join(map(str, e)) for e in d]), mimetype='text/csv')
 
 
-@app.route('/sentiment_agg')
-def sentiment_agg():
+@app.route('/hist_data', methods=['GET', 'POST'])
+def hist_data():
+    website = request.args.get('website')
+    person = request.args.get('person')
     db = psycopg2.connect(host='ec2-54-208-219-223.compute-1.amazonaws.com',
                           database='election',
                           user='elections',
                           password='election2016')
-    curs = db.cursor()
-    curs.execute("""select person, a.website, to_timestamp(timestamp)::date::varchar, avg(sentiment)::varchar, count(*)::varchar 
-                    from data a join top_websites b on a.website = b.website
-                    where person in ('Trump','Clinton') group by 1, 2, 3;
-                """)
+    curs = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    if website:
+        sql = """select a.bin, sum(coalesce(count,0)) from histogram_bins a
+                left join (select * from data_binned where website = '%s' and person = '%s') b on a.bin = b.bin
+                group by 1 order by 1""" % (website, person)
+    else:
+        sql = """select a.bin, sum(coalesce(count,0)) from histogram_bins a
+                left join (select * from data_binned where person = '%s') b on a.bin = b.bin
+                group by 1 order by 1""" % person
+    print(sql)
+    curs.execute(sql)
     d = curs.fetchall()
-    fields = ('Candidate', 'Source', 'Date', 'Score', 'Count')
-    return to_csv(d, fields)
+    fields = ('bin', 'sum')
+    return jsonify(data=d)
