@@ -520,6 +520,11 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
             // first remove any existing histograms
             d3.selectAll('.histograms').remove();
+
+            //
+            // Clinton
+            //
+
             // add the histogram for Clinton
             // populate the list of values into an array for each candidate
             $.ajax({
@@ -576,7 +581,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
                               var svg = d3.select("body").append("svg")
                                           .attr("class","histograms")
                                           .attr("width", hist_width + margin.left + margin.right)
-                                          .attr("height", hist_height + margin.top + margin.bottom+275)
+                                          .attr("height", hist_height + margin.top + margin.bottom) // add 275 when rotating
                                           .append("g")
                                           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -629,7 +634,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
                                 .call(yAxis);
 
                               // rotate the histogram
-                              svg.attr("transform","rotate(90 140 200)");
+                              // svg.attr("transform","rotate(90 0 500) scale(-1,1)");
 
                                 }
                             });
