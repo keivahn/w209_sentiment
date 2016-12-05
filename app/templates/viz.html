@@ -286,52 +286,84 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   svg.append("line")
       .attr("x1", xScale(basket))
-      .attr("y1", yScale(-0.7))
+      .attr("y1", yScale(-0.63))
       .attr("x2", xScale(basket))
-      .attr("y2", yScale(0.54))
+      .attr("y2", yScale(0.78))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(basket))
-      .attr("y", yScale(0.55))
+      .attr("y", yScale(0.81))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("Clinton's basket of deplorables comment");
 
   svg.append("line")
       .attr("x1", xScale(debate1))
-      .attr("y1", yScale(-0.7))
+      .attr("y1", yScale(-0.63))
       .attr("x2", xScale(debate1))
-      .attr("y2", yScale(0.6))
+      .attr("y2", yScale(0.79))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(debate1))
-      .attr("y", yScale(0.61))
+      .attr("y", yScale(0.8))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("First Debate");
 
   svg.append("line")
+      .attr("x1", xScale(debate2))
+      .attr("y1", yScale(-0.63))
+      .attr("x2", xScale(debate2))
+      .attr("y2", yScale(0.79))
+      .style("stroke-width", 2)
+      .style("stroke", "#9FACB9")
+      .style("fill", "none");
+
+  svg.append("text")
+      .attr("x", xScale(debate2))
+      .attr("y", yScale(0.8))
+      .attr("text-anchor", "middle")
+      //.style("font-size", "16px")
+      .text("Second Debate");
+  
+   svg.append("line")
+      .attr("x1", xScale(debate3))
+      .attr("y1", yScale(-0.63))
+      .attr("x2", xScale(debate3))
+      .attr("y2", yScale(0.79))
+      .style("stroke-width", 2)
+      .style("stroke", "#9FACB9")
+      .style("fill", "none");
+
+  svg.append("text")
+      .attr("x", xScale(debate3))
+      .attr("y", yScale(0.8))
+      .attr("text-anchor", "middle")
+      //.style("font-size", "16px")
+      .text("Third Debate");
+
+  svg.append("line")
       .attr("x1", xScale(fall))
-      .attr("y1", yScale(-0.7))
+      .attr("y1", yScale(-0.63))
       .attr("x2", xScale(fall))
-      .attr("y2", yScale(0.6))
+      .attr("y2", yScale(0.78))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(fall))
-      .attr("y", yScale(0.61))
+      .attr("y", yScale(0.79))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("Clinton Faints at 9/11 Memorial");
-
+  
   // draw dots
   svg.selectAll(".dot")
       .data(data)
