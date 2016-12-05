@@ -761,18 +761,31 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   // draw legend colored rectangles
   legend.append("rect")
-      .attr("x", width - 18)
+      .attr("x", width - 36)
       .attr("width", 18)
       .attr("height", 18)
       .style("fill", color);
 
   // draw legend text
   legend.append("text")
-      .attr("x", width - 24)
+      .attr("x", width - 42)
       .attr("y", 9)
       .attr("dy", ".35em")
       .style("text-anchor", "end")
       .text(function(d) { return d;})
+
+  d3.csv("{{ url_for('static', filename='total_count_all.csv') }}", function(tot_count_all) {
+    tot_count_all.forEach(function(d) {
+      d.count = +d.count;
+    });
+
+      legend.append("text")
+          .attr("x", width + 20)
+          .attr("y", 9)
+          .attr("dy", ".35em")
+          .style("text-anchor", "end")
+          .text("36341");
+  });
 
   d3.csv("{{ url_for('static', filename='avg_sentiment.csv') }}", function(data_avg) {
     data_avg.forEach(function(d) {
