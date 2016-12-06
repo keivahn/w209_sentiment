@@ -28,6 +28,14 @@ body {
   pointer-events: none;
 }
 
+div.centre
+{
+  width: 200px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /*styling for tooltip*/
 #tooltip {
       position: absolute;
@@ -152,16 +160,16 @@ body {
       </select>
     </label>
     <br><br>
+</form>
 
-
-    <div id="check_filter">
+    <div id="check_filter" class='centre'>
       <b>Candidates: </b>
       <input type="checkbox" name="candidate" id="Trump_check" value="Trump" checked>Trump
       <input type="checkbox" name="candidate" id="Clinton_check" value="Clinton" checked>Clinton
     <br><br>
     </div>
 
-    <div id="check_filter2">
+    <div id="check_filter2" class='centre'>
       <b>Average Trend Line: </b>
       <input type="checkbox" name="Average_Trend" value="Line" checked> Enabled
     <br><br>
@@ -183,8 +191,8 @@ body {
 
 <script>
 var margin = {top: 20, right: 20, bottom: 40, left: 60},
-    width = 1100 - margin.left - margin.right,
-    height = 800 - margin.top - margin.bottom;
+    width = 900 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
 var hover_pad = 45;
 
@@ -561,7 +569,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
             // whitespace on either side of the bars
             var binmargin = .005;
 
-            var hist_width = width/2;
+            var hist_width = width/2 - 25;
             var hist_height = height/3;
 
             // first remove any existing histograms
