@@ -120,7 +120,7 @@ body {
       <strong>2nd News source:</strong>
 
       <select id="news-sources2" name="news-sources2">
-          <option value="None">None</option>
+          <option value="None" selected="selected">None</option>
           <option value="ap.org">ap.org</option>
           <option value="bloomberg.com">bloomberg.com</option>
           <option value="breitbart.com">breitbart.com</option>
@@ -360,9 +360,9 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
   svg.append("text")
       .attr("x", xScale(fall))
       .attr("y", yScale(0.78))
-      .attr("text-anchor", "middle")
+      .attr("text-anchor", "right")
       //.style("font-size", "16px")
-      .text("Clinton Faints");
+      .text("Clinton Faints at 9/11");
   
   // draw dots
   svg.selectAll(".dot")
@@ -477,7 +477,9 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
        // make all dots visible if the user has selected "All"
        if(selected == 'All'){
          svg.selectAll(".dot")
-            .attr("visibility", "visible");
+            .attr("visibility", "visible")
+            .style("fill", function(d) { return color(cValue(d)); })
+            .style("stroke", "black");
 
           svg.selectAll(".line2")
             .attr("visibility", "hidden");
@@ -485,8 +487,10 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
           svg.selectAll(".line3")
             .attr("visibility", "hidden");
 
-
+          $("#filter2").val("None").change();
+          $('#filter2 option').prop('selected', function() { return this.defaultSelected; });
           $("#filter2.hidden").css("visibility", "hidden");
+          $("select option").prop("disabled", false);
           }
 
        // make only the appropriate dot visible if the user has
@@ -502,8 +506,10 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
         $("#filter2.hidden").css("visibility", "visible");
         $("select option").prop("disabled", false);
-        $("#filter2.hidden").find("option[value='" + "Select" + "']").hide();
+        //$("#filter2.hidden").find("option[value='" + "Select" + "']").hide();
         $("#filter2.hidden").find("option[value='" + selected + "']").prop("disabled", true);
+        var selected2 = $('#filter2 option:selected').val();
+        $("#filter.hidden").find("option[value='" + selected2 + "']").prop("disabled", true);
 
         svg.selectAll(".dot")
            .filter(function(d) {return selected != d.source;})
@@ -901,7 +907,6 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   d3.selectAll("input[name=candidate]").on("change", function() {
     var selected_candidate = this.value;
-    console.log(selected_candidate)
     display = this.checked ? "inline" : "none";
     display_line = this.checked ? "visible" : "hidden";
 
