@@ -286,52 +286,84 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   svg.append("line")
       .attr("x1", xScale(basket))
-      .attr("y1", yScale(-0.7))
+      .attr("y1", yScale(-0.63))
       .attr("x2", xScale(basket))
-      .attr("y2", yScale(0.54))
+      .attr("y2", yScale(0.78))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(basket))
-      .attr("y", yScale(0.55))
+      .attr("y", yScale(0.81))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("Clinton's basket of deplorables comment");
 
   svg.append("line")
       .attr("x1", xScale(debate1))
-      .attr("y1", yScale(-0.7))
+      .attr("y1", yScale(-0.63))
       .attr("x2", xScale(debate1))
-      .attr("y2", yScale(0.6))
+      .attr("y2", yScale(0.79))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(debate1))
-      .attr("y", yScale(0.61))
+      .attr("y", yScale(0.8))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("First Debate");
 
   svg.append("line")
+      .attr("x1", xScale(debate2))
+      .attr("y1", yScale(-0.63))
+      .attr("x2", xScale(debate2))
+      .attr("y2", yScale(0.79))
+      .style("stroke-width", 2)
+      .style("stroke", "#9FACB9")
+      .style("fill", "none");
+
+  svg.append("text")
+      .attr("x", xScale(debate2))
+      .attr("y", yScale(0.8))
+      .attr("text-anchor", "middle")
+      //.style("font-size", "16px")
+      .text("Second Debate");
+  
+   svg.append("line")
+      .attr("x1", xScale(debate3))
+      .attr("y1", yScale(-0.63))
+      .attr("x2", xScale(debate3))
+      .attr("y2", yScale(0.79))
+      .style("stroke-width", 2)
+      .style("stroke", "#9FACB9")
+      .style("fill", "none");
+
+  svg.append("text")
+      .attr("x", xScale(debate3))
+      .attr("y", yScale(0.8))
+      .attr("text-anchor", "middle")
+      //.style("font-size", "16px")
+      .text("Third Debate");
+
+  svg.append("line")
       .attr("x1", xScale(fall))
-      .attr("y1", yScale(-0.7))
+      .attr("y1", yScale(-0.63))
       .attr("x2", xScale(fall))
-      .attr("y2", yScale(0.6))
+      .attr("y2", yScale(0.78))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(fall))
-      .attr("y", yScale(0.61))
+      .attr("y", yScale(0.79))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("Clinton Faints at 9/11 Memorial");
-
+  
   // draw dots
   svg.selectAll(".dot")
       .data(data)
@@ -774,17 +806,55 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .style("text-anchor", "end")
       .text(function(d) { return d;})
 
+  // draw legend for dotted and solid line
+  svg.append("line")
+    .attr("x1", width - 72)
+    .attr("x2", width - 56)
+    .attr("y1", 48)
+    .attr("y2", 48)
+    .style("stroke-dasharray","3,3")
+    .style("stroke", "black");
+
+  svg.append("line")
+    .attr("x1", width - 72)
+    .attr("x2", width - 56)
+    .attr("y1", 63)
+    .attr("y2", 63)
+    .style("stroke","3,3")
+    .style("stroke", "black");
+
+  svg.append("text")
+      .attr("x", width + 20)
+      .attr("y", 48)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text("All news");
+
+  svg.append("text")
+      .attr("x", width + 20)
+      .attr("y", 63)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text("Selected news");
+
   d3.csv("{{ url_for('static', filename='total_count_all.csv') }}", function(tot_count_all) {
     tot_count_all.forEach(function(d) {
       d.count = +d.count;
     });
 
-      legend.append("text")
+      svg.append("text")
           .attr("x", width + 20)
-          .attr("y", 9)
+          .attr("y", 10)
           .attr("dy", ".35em")
           .style("text-anchor", "end")
           .text("36341");
+
+      svg.append("text")
+          .attr("x", width + 20)
+          .attr("y", 30)
+          .attr("dy", ".35em")
+          .style("text-anchor", "end")
+          .text("39511");
   });
 
   d3.csv("{{ url_for('static', filename='avg_sentiment.csv') }}", function(data_avg) {
