@@ -80,7 +80,7 @@ body {
 
 </style>
 <body>
-<form>
+<form align="center">
   <label id="filter">
       <strong>News source:</strong>
 
@@ -120,7 +120,7 @@ body {
       <strong>2nd News source:</strong>
 
       <select id="news-sources2" name="news-sources2">
-          <option value="Select">Select</option>
+          <option value="None">None</option>
           <option value="ap.org">ap.org</option>
           <option value="bloomberg.com">bloomberg.com</option>
           <option value="breitbart.com">breitbart.com</option>
@@ -298,7 +298,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .attr("y", yScale(0.81))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
-      .text("Clinton's basket of deplorables comment");
+      .text("Basket of Deplorables");
 
   svg.append("line")
       .attr("x1", xScale(debate1))
@@ -359,10 +359,10 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   svg.append("text")
       .attr("x", xScale(fall))
-      .attr("y", yScale(0.79))
+      .attr("y", yScale(0.78))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
-      .text("Clinton Faints at 9/11 Memorial");
+      .text("Clinton Faints");
   
   // draw dots
   svg.selectAll(".dot")
@@ -411,51 +411,65 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   dropDown2.on("change", function() {
        var selected2 = this.value;
-       var selected = $('#filter').find(":selected").text();
 
-       $("#filter").prop("disabled", false);
-       $("#filter").find("option[value='" + selected2 + "']").prop("disabled", true);
+        if(selected == 'None') {
+            svg.selectAll(".line3")
+              .attr("visibility", "hidden");
+            }
 
-       svg.selectAll(".dot")
-          .attr("visibility", "hidden");
+        else {
+          var selected = $('#filter').find(":selected").text();
 
-       svg.selectAll(".line3")
-          .attr("visibility", "hidden");
+         $("#filter").prop("disabled", false);
+         $("#filter").find("option[value='" + selected2 + "']").prop("disabled", true);
 
-       svg.selectAll(".dot")
-          .filter(function(d) { return selected2 == d.source || selected == d.source; })
-          .attr("visibility", "visible");
+         svg.selectAll(".dot")
+            .attr("visibility", "hidden");
 
-        data_selected = data.filter(function(row) {
-            return row['source'] == selected2;
-          });
+         svg.selectAll(".line3")
+            .attr("visibility", "hidden");
 
-            //use original scale from scatter
-            xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
-            yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
+           svg.selectAll(".dot")
+              .filter(function(d) { return selected == d.source; })
+              .attr("visibility", "visible");
 
-            // Nest the entries by candidate
-            var dataNest = d3.nest()
-                .key(function(d) {return d.candidate;})
-                .entries(data_selected);
+           svg.selectAll(".dot")
+              .filter(function(d) { return selected2 == d.source; })
+              .style("fill", "none")
+              .style("stroke", function(d) { return color(cValue(d));})
+              .attr("visibility", "visible");
 
-            // Loop through each candidate / key and assign to line2 attribute
-            // which is different from the axis and trend line for all
-            dataNest.forEach(function(d) {
+          data_selected = data.filter(function(row) {
+              return row['source'] == selected2;
+            });
 
-                svg.append("path")
-                    .attr("class", "line3")
-                    .attr("id", d.key)
-                    .attr("d", sentline(d.values))
-                    .attr("visibility", function () {
-                      if($('#' + d.key + '_check').is(":checked")) {
-                        return "visible"
-                      }
-                      else { return "hidden"}  } )
-                    .style("stroke-dasharray", ("3, 6"))
-                    .style("stroke", function() { return d.color=color(d.key) });
+              //use original scale from scatter
+              xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
+              yScale.domain([d3.min(data, yValue), d3.max(data, yValue)]);
+
+              // Nest the entries by candidate
+              var dataNest = d3.nest()
+                  .key(function(d) {return d.candidate;})
+                  .entries(data_selected);
+
+              // Loop through each candidate / key and assign to line2 attribute
+              // which is different from the axis and trend line for all
+              dataNest.forEach(function(d) {
+
+                  svg.append("path")
+                      .attr("class", "line3")
+                      .attr("id", d.key)
+                      .attr("d", sentline(d.values))
+                      .attr("visibility", function () {
+                        if($('#' + d.key + '_check').is(":checked")) {
+                          return "visible"
+                        }
+                        else { return "hidden"}  } )
+                      .style("stroke-dasharray", ("3, 6"))
+                      .style("stroke", function() { return d.color=color(d.key) });
 
                 });
+              }
           });
 
   dropDown.on("change", function() {
@@ -564,7 +578,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
                   url: "hist_data",
                   dataType: "text",
                   data: {
-                      person: "Trump",
+                      person: "Clinton",
                       website: $('#news-sources').val()
                   },
                   success:  function(data) {
@@ -828,14 +842,14 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .attr("y", 48)
       .attr("dy", ".35em")
       .style("text-anchor", "end")
-      .text("All news");
+      .text("Selected news");
 
   svg.append("text")
       .attr("x", width + 20)
       .attr("y", 63)
       .attr("dy", ".35em")
       .style("text-anchor", "end")
-      .text("Selected news");
+      .text("All news");
 
   d3.csv("{{ url_for('static', filename='total_count_all.csv') }}", function(tot_count_all) {
     tot_count_all.forEach(function(d) {
