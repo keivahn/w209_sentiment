@@ -28,14 +28,6 @@ body {
   pointer-events: none;
 }
 
-div.centre
-{
-  width: 200px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 /*styling for tooltip*/
 #tooltip {
       position: absolute;
@@ -160,16 +152,16 @@ div.centre
       </select>
     </label>
     <br><br>
-</form>
 
-    <div id="check_filter" class='centre'>
+
+    <div id="check_filter">
       <b>Candidates: </b>
       <input type="checkbox" name="candidate" id="Trump_check" value="Trump" checked>Trump
       <input type="checkbox" name="candidate" id="Clinton_check" value="Clinton" checked>Clinton
     <br><br>
     </div>
 
-    <div id="check_filter2" class='centre'>
+    <div id="check_filter2">
       <b>Average Trend Line: </b>
       <input type="checkbox" name="Average_Trend" value="Line" checked> Enabled
     <br><br>
@@ -191,8 +183,8 @@ div.centre
 
 <script>
 var margin = {top: 20, right: 20, bottom: 40, left: 60},
-    width = 900 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    width = 1100 - margin.left - margin.right,
+    height = 800 - margin.top - margin.bottom;
 
 var hover_pad = 45;
 
@@ -510,6 +502,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
           .attr("visibility", "hidden");
 
         svg.selectAll(".dot")
+           .filter(function(d) { return selected == d.source; })
            .attr("visibility", "visible");
 
         $("#filter2.hidden").css("visibility", "visible");
@@ -517,11 +510,18 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
         //$("#filter2.hidden").find("option[value='" + "Select" + "']").hide();
         $("#filter2.hidden").find("option[value='" + selected + "']").prop("disabled", true);
         var selected2 = $('#filter2 option:selected').val();
-        $("#filter.hidden").find("option[value='" + selected2 + "']").prop("disabled", true);
+        $("#filter").find("option[value='" + selected2 + "']").prop("disabled", true);
 
-        svg.selectAll(".dot")
-           .filter(function(d) {return selected != d.source;})
-           .attr("visibility", "hidden");
+        if (selected2 == "None") {
+          svg.selectAll(".dot")
+             .filter(function(d) {return selected != d.source;})
+             .attr("visibility", "hidden");
+          }
+          else {
+            svg.selectAll(".dot")
+               .filter(function(d) {return selected != d.source && selected2 != d.source ;})
+               .attr("visibility", "hidden");  
+          }
 
         data_selected = data.filter(function(row) {
             return row['source'] == selected;
@@ -575,7 +575,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
             // whitespace on either side of the bars
             var binmargin = .005;
 
-            var hist_width = width/2 - 25;
+            var hist_width = width/2;
             var hist_height = height/3;
 
             // first remove any existing histograms
