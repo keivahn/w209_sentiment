@@ -78,6 +78,48 @@ body {
     fill: none;
 }
 
+/*
+/
+checkbox styling
+/
+*/
+
+/*hide the regular checkbox*/
+input[type=checkbox] {
+	visibility: hidden;
+}
+
+/*create the slider bar*/
+.slider {
+	width: 40px;
+	height: 10px;
+	background: #555;
+	margin: 20px 80px;
+	position: relative;
+	border-radius: 3px;
+}
+
+/*create the slider*/
+.slider label {
+	display: block;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+
+	transition: all .5s ease;
+	cursor: pointer;
+	position: absolute;
+	top: -3px;
+	left: -3px;
+
+	background: #ccc;
+}
+
+/*move the slider*/
+.slider input[type=checkbox]:checked + label {
+	left: 27px;
+}
+
 </style>
 <body>
 <form align="center">
@@ -152,21 +194,29 @@ body {
       </select>
     </label>
     <br><br>
-
-
+<center>
     <div id="check_filter">
-      <b>Candidates: </b>
-      <input type="checkbox" name="candidate" id="Trump_check" value="Trump" checked>Trump
-      <input type="checkbox" name="candidate" id="Clinton_check" value="Clinton" checked>Clinton
+      <b>Candidates:</b><br>
+        <div class="slider" style="float:center;">
+          <input type="checkbox" name="candidate" id="Trump_check" value="Trump" style="float:left;" checked>
+          <label for="Trump_check"></label>
+        </div>Trump
+        <div class="slider">
+          <input type="checkbox" name="candidate" id="Clinton_check" value="Clinton" checked>
+          <label for="Clinton_check"></label>
+        </div>Clinton
     <br><br>
     </div>
-
+    <br><br>
     <div id="check_filter2">
-      <b>Average Trend Line: </b>
-      <input type="checkbox" name="Average_Trend" value="Line" checked> Enabled
+      <b>Average Trend Line:</b>
+      <div class="slider">
+        <input type="checkbox" id="Average_check" name="Average_Trend" value="Line" checked>
+        <label for="Average_check"></label>
+      </div>
     <br><br>
     </div>
-
+</center>
   </form>
 
   <!-- tooltip for when hovering over bars -->
@@ -175,7 +225,7 @@ body {
         <p><span id="node_date">date</span></p>
         <p>Sentiment: <span id="node_sentiment">score</span></p>
         <p><em><span id="node_source">source</span></em></p>
-        <p># of Articles: <span id="node_count">count</span></p>
+        <p># of articles: <span id="node_count">count</span></p>
   </div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -331,7 +381,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("Second Debate");
-  
+
    svg.append("line")
       .attr("x1", xScale(debate3))
       .attr("y1", yScale(-0.63))
@@ -363,7 +413,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .attr("text-anchor", "right")
       //.style("font-size", "16px")
       .text("Clinton Faints at 9/11");
-  
+
   // draw dots
   svg.selectAll(".dot")
       .data(data)
@@ -520,7 +570,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
           else {
             svg.selectAll(".dot")
                .filter(function(d) {return selected != d.source && selected2 != d.source ;})
-               .attr("visibility", "hidden");  
+               .attr("visibility", "hidden");
           }
 
         data_selected = data.filter(function(row) {
