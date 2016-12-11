@@ -89,7 +89,7 @@
 #Section3 {
   background-color: #FFFFFF;
   color: #484A4A;
-  width: 950px;
+  width: 1200px;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -185,7 +185,7 @@ body a {
     <p class="heading">Solution</p>
     We need a solution that addresses the problem of the echo chamber and helps
     individuals understand how key events affect biases of their news sources.
-    We offer a partial solution to this echo chamber problem. By visualizing the
+    We offer a partial solution to this problem. By visualizing the
     basic sentiment of your news sources, we can begin to understand the echo
     chambers we live in. For example, if my favorite news sources are <em>The
     Washington Post</em> and <em>The Huffington Post</em>, I can begin to see how
@@ -203,11 +203,11 @@ body a {
     In this context, sentiment is the general positive or negative tone of an
     article. The sentiment scores were produced by
     <a href="https://www.ibm.com/blogs/bluemix/2016/06/cognitive-apis-with-watson-sentiment-analysis/"
-    target="_blank">IBM's Watson</a>. Sentiment scores are centered at 0, which
+    target="_blank">IBM's Watson Alchemy API</a>. Sentiment scores are centered at 0, which
     is neutral. Sentiment scores of 1 are very positive, and sentiment scores of
     -1 are very negative. For example, an article about Hilary Clinton
     that has a 0.25 sentiment score is a slightly positive article about Hilary Clinton.
-    It is important to caveat here that a positive sentiment score does not necessarily
+    An important caveat here is that a positive sentiment score does not necessarily
     mean that the article supports Hilary Clinton. In the same sense, an article
     with a negative sentiment score about Donald Trump is not necessarily criticizing
     Donald Trump. However, we can make inferences about a news source's biases
@@ -219,7 +219,7 @@ body a {
     <p class="heading">☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆</p>
     <p class="heading">Try it out</p>
     <p>
-      <object type="text/html" data="/viz" width="100%" height="1000" align="center">
+      <object type="text/html" data="/viz" width="100%" height="1300" align="center">
       </object>
     </p>
   </div>
@@ -230,11 +230,11 @@ body a {
     <p>
       <a href="https://www.ibm.com/watson/developercloud/alchemy-data-news.html"
       target="_blank">AlchemyData News</a>,
-      a part of IBM's Watson Developer Cloud, gathers and analyzes between 250K
+      is a service provided under IBM's Watson Developer Cloud. The API gathers and analyzes between 250K
       and 300K English news articles and blog posts every day. We queried AlchemyData News
       for the two major candidates (Donald Trump and Hilary Clinton) every day
-      during the fall of 2016. Due to the extensive amount of data, we focused on only
-      the top 25 news producing sources. To further simplify the visualization,
+      during the Fall of 2016. Due to the extensive amount of data, we focused on only
+      the top 25 news producing sources by article volume. To further simplify the visualization,
       we summarized the data for each news source by day by taking the average
       of the sentiment scores. We plotted the averages in a scatterplot over time.
       However, because when taking averages, we lose some of the granularity of

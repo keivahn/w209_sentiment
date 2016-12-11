@@ -78,48 +78,6 @@ body {
     fill: none;
 }
 
-/*
-/
-checkbox styling
-/
-*/
-
-/*hide the regular checkbox*/
-input[type=checkbox] {
-	visibility: hidden;
-}
-
-/*create the slider bar*/
-.slider {
-	width: 40px;
-	height: 10px;
-	background: #555;
-	margin: 20px 80px;
-	position: relative;
-	border-radius: 3px;
-}
-
-/*create the slider*/
-.slider label {
-	display: block;
-	width: 16px;
-	height: 16px;
-	border-radius: 50%;
-
-	transition: all .5s ease;
-	cursor: pointer;
-	position: absolute;
-	top: -3px;
-	left: -3px;
-
-	background: #ccc;
-}
-
-/*move the slider*/
-.slider input[type=checkbox]:checked + label {
-	left: 27px;
-}
-
 </style>
 <body>
 <form align="center">
@@ -194,30 +152,19 @@ input[type=checkbox] {
       </select>
     </label>
     <br><br>
-<center>
     <div id="check_filter">
-      <b>Candidates:</b><br>
-        <div class="slider" style="float:center;">
-          <input type="checkbox" name="candidate" id="Trump_check" value="Trump" style="float:left;" checked>
-          <label for="Trump_check"></label>
-        </div>Trump
-        <div class="slider">
-          <input type="checkbox" name="candidate" id="Clinton_check" value="Clinton" checked>
-          <label for="Clinton_check"></label>
-        </div>Clinton
+      <b>Candidates: </b>
+      <input type="checkbox" name="candidate" id="Trump_check" value="Trump" checked>Trump
+      <input type="checkbox" name="candidate" id="Clinton_check" value="Clinton" checked>Clinton
     <br><br>
     </div>
-    <br><br>
+
     <div id="check_filter2">
-      <b>Average Trend Line:</b>
-      <div class="slider">
-        <input type="checkbox" id="Average_check" name="Average_Trend" value="Line" checked>
-        <label for="Average_check"></label>
-      </div>
+      <b>Average Trend Line: </b>
+      <input type="checkbox" name="Average_Trend" value="Line" checked> Enabled
     <br><br>
     </div>
-</center>
-  </form>
+  </form> 
 
   <!-- tooltip for when hovering over bars -->
   <div id="tooltip" class="hidden">
@@ -225,7 +172,7 @@ input[type=checkbox] {
         <p><span id="node_date">date</span></p>
         <p>Sentiment: <span id="node_sentiment">score</span></p>
         <p><em><span id="node_source">source</span></em></p>
-        <p># of articles: <span id="node_count">count</span></p>
+        <p># of Articles: <span id="node_count">count</span></p>
   </div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -306,7 +253,9 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
-      .text("date");
+      .text("Date")
+      .style("font-size", "14px")
+      .style("font-style", "italic");
 
   // y-axis
   svg.append("g")
@@ -315,11 +264,13 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .append("text")
       .attr("class", "label")
       // .attr("transform", "rotate(-90)")
-      .attr("y", 0)
-      .attr("x", 30)
+      .attr("y", 2)
+      .attr("x", 40)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("score");
+      .text("Score")
+      .style("font-size", "14px")
+      .style("font-style", "italic");
 
   // event markers
   var basket = parsedate("2016-09-09");
@@ -336,84 +287,84 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   svg.append("line")
       .attr("x1", xScale(basket))
-      .attr("y1", yScale(-0.63))
+      .attr("y1", yScale(-0.655))
       .attr("x2", xScale(basket))
-      .attr("y2", yScale(0.78))
+      .attr("y2", yScale(0.54))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(basket))
-      .attr("y", yScale(0.81))
+      .attr("y", yScale(0.56))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("Basket of Deplorables");
 
   svg.append("line")
       .attr("x1", xScale(debate1))
-      .attr("y1", yScale(-0.63))
+      .attr("y1", yScale(-0.655))
       .attr("x2", xScale(debate1))
-      .attr("y2", yScale(0.79))
+      .attr("y2", yScale(0.54))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(debate1))
-      .attr("y", yScale(0.8))
+      .attr("y", yScale(0.56))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("First Debate");
 
   svg.append("line")
       .attr("x1", xScale(debate2))
-      .attr("y1", yScale(-0.63))
+      .attr("y1", yScale(-0.655))
       .attr("x2", xScale(debate2))
-      .attr("y2", yScale(0.79))
+      .attr("y2", yScale(0.54))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(debate2))
-      .attr("y", yScale(0.8))
+      .attr("y", yScale(0.56))
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("Second Debate");
-
+  
    svg.append("line")
       .attr("x1", xScale(debate3))
-      .attr("y1", yScale(-0.63))
+      .attr("y1", yScale(-0.655))
       .attr("x2", xScale(debate3))
-      .attr("y2", yScale(0.79))
+      .attr("y2", yScale(0.54))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(debate3))
-      .attr("y", yScale(0.8))
-      .attr("text-anchor", "middle")
+      .attr("y", yScale(0.53))
+      .attr("text-anchor", "left")
       //.style("font-size", "16px")
       .text("Third Debate");
 
   svg.append("line")
       .attr("x1", xScale(fall))
-      .attr("y1", yScale(-0.63))
+      .attr("y1", yScale(-0.655))
       .attr("x2", xScale(fall))
-      .attr("y2", yScale(0.78))
+      .attr("y2", yScale(0.54))
       .style("stroke-width", 2)
       .style("stroke", "#9FACB9")
       .style("fill", "none");
 
   svg.append("text")
       .attr("x", xScale(fall))
-      .attr("y", yScale(0.78))
+      .attr("y", yScale(0.54))
       .attr("text-anchor", "right")
       //.style("font-size", "16px")
       .text("Clinton Faints at 9/11");
-
+  
   // draw dots
   svg.selectAll(".dot")
       .data(data)
@@ -462,16 +413,31 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
   dropDown2.on("change", function() {
        var selected2 = this.value;
 
-        if(selected == 'None') {
+        if(selected2 == 'None') {
+          var selected = $('#filter').find(":selected").text();
+
             svg.selectAll(".line3")
               .attr("visibility", "hidden");
+
+            svg.selectAll(".dot")
+              .attr("visibility", "hidden");
+
+            svg.selectAll(".dot")
+              .filter(function(d) { return selected == d.source; })
+              .attr("visibility", "visible");
+
+            $("select option").prop("disabled", false);
+            $("#filter").find("option[value='" + selected2 + "']").prop("disabled", true);
+            $("#filter2.hidden").find("option[value='" + selected + "']").prop("disabled", true);
             }
 
         else {
           var selected = $('#filter').find(":selected").text();
 
-         $("#filter").prop("disabled", false);
+         //$("#filter").prop("disabled", false);
+         $("select option").prop("disabled", false);
          $("#filter").find("option[value='" + selected2 + "']").prop("disabled", true);
+         $("#filter2.hidden").find("option[value='" + selected + "']").prop("disabled", true);
 
          svg.selectAll(".dot")
             .attr("visibility", "hidden");
@@ -485,7 +451,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
            svg.selectAll(".dot")
               .filter(function(d) { return selected2 == d.source; })
-              .style("fill", "none")
+              .style("fill", "white")
               .style("stroke", function(d) { return color(cValue(d));})
               .attr("visibility", "visible");
 
@@ -508,14 +474,14 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
                   svg.append("path")
                       .attr("class", "line3")
-                      .attr("id", d.key)
+                      .attr("id", d.key+selected2.split('.')[0])
                       .attr("d", sentline(d.values))
                       .attr("visibility", function () {
                         if($('#' + d.key + '_check').is(":checked")) {
                           return "visible"
                         }
                         else { return "hidden"}  } )
-                      .style("stroke-dasharray", ("3, 6"))
+                      .style("stroke-dasharray", ("2, 6"))
                       .style("stroke", function() { return d.color=color(d.key) });
 
                 });
@@ -570,7 +536,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
           else {
             svg.selectAll(".dot")
                .filter(function(d) {return selected != d.source && selected2 != d.source ;})
-               .attr("visibility", "hidden");
+               .attr("visibility", "hidden");  
           }
 
         data_selected = data.filter(function(row) {
@@ -592,14 +558,14 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
                 svg.append("path")
                     .attr("class", "line2")
-                    .attr("id", d.key)
+                    .attr("id", d.key + selected.split('.')[0])
                     .attr("d", sentline(d.values))
                     .attr("visibility", function () {
                       if($('#' + d.key + '_check').is(":checked")) {
                         return "visible"
                       }
                       else { return "hidden"}  } )
-                    .style("stroke-dasharray", ("5, 5"))
+                    .style("stroke-dasharray", ("7, 5"))
                     .style("stroke", function() { return d.color=color(d.key) });
 
                   });
@@ -734,7 +700,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
                                 .attr("class","x label")
                                 .attr("text-anchor", "middle")
                                 .attr("x", hist_width/2)
-                                .attr("y", hist_height + margin.bottom)
+                                .attr("y", hist_height + margin.bottom-2)
                                 .text("Clinton Sentiment Distribution")
 
                               // add the y-axis
@@ -742,6 +708,16 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
                                 .attr("class", "y axis")
                                 .attr("transform", "translate(0,0)")
                                 .call(yAxis);
+
+                              // add the y-axis label
+                              svg.append("text")
+                                .attr("class","x label")
+                                .attr("text-anchor", "left")
+                                .attr("x", margin.left)
+                                .attr("y", -10)
+                                .text("Count of " + $('#news-sources').val())
+                                .style("font-weight", "bold")
+                                .style("font-size", 14);
 
                               // rotate the histogram
                               // svg.attr("transform","rotate(90 0 500) scale(-1,1)");
@@ -848,8 +824,18 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
                                 .attr("class","x label")
                                 .attr("text-anchor", "middle")
                                 .attr("x", hist_width/2)
-                                .attr("y", hist_height + margin.bottom)
+                                .attr("y", hist_height + margin.bottom-2)
                                 .text("Trump Sentiment Distribution")
+
+                              // add the y-axis label
+                              svg.append("text")
+                                .attr("class","x label")
+                                .attr("text-anchor", "left")
+                                .attr("x", margin.left)
+                                .attr("y",-10)
+                                .text("Count of " + $('#news-sources').val())
+                                .style("font-weight", "bold")
+                                .style("font-size", 14);
 
                               // add the y-axis
                               svg.append("g")
@@ -892,6 +878,20 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
     .attr("y2", 48)
     .style("stroke-dasharray","3,3")
     .style("stroke", "black");
+
+  svg.append("text")
+    .attr("x", width + 20)
+    .attr("y", -6)
+    .attr("dy", ".35em")
+    .style("text-anchor", "end")
+    .text("Count");
+
+  svg.append("text")
+    .attr("x", width + 20)
+    .attr("y", -16)
+    .attr("dy", ".35em")
+    .style("text-anchor", "end")
+    .text("Article");
 
   svg.append("line")
     .attr("x1", width - 72)
@@ -968,19 +968,22 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
     display = this.checked ? "inline" : "none";
     display_line = this.checked ? "visible" : "hidden";
 
+    var selected = $('#filter').find(":selected").val();
+    var selected2 = $('#filter2 option:selected').val();
+
     svg.selectAll(".dot")
       .filter(function(d) { return selected_candidate == d.candidate })
       .attr("display", display);
 
-      if (selected_candidate=='Clinton') {
-        svg.selectAll("#Clinton")
-        .attr("visibility", display_line);
-      } else if (selected_candidate=='Trump') {
-        svg.selectAll("#Trump")
-        .attr("visibility", display_line);
-      }
+    var select1 = selected_candidate + selected.split('.')[0];
+    var select2 = selected_candidate + selected2.split('.')[0];
 
-  });
+    d3.selectAll("#" + select1)
+      .attr("visibility", display_line);
+    d3.selectAll("#"+ select2)
+      .attr("visibility", display_line);
+
+  }); 
 
   d3.selectAll("input[name=Average_Trend]").on("change", function() {
     display = this.checked ? "inline" : "none";
@@ -989,10 +992,6 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
        .attr("display", display);
   });
 })
-
-
-
-
 
 </script>
 </body>
