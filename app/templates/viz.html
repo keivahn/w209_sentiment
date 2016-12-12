@@ -164,7 +164,7 @@ body {
       <input type="checkbox" name="Average_Trend" value="Line" checked> Enabled
     <br><br>
     </div>
-  </form> 
+  </form>
 
   <!-- tooltip for when hovering over bars -->
   <div id="tooltip" class="hidden">
@@ -332,7 +332,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .attr("text-anchor", "middle")
       //.style("font-size", "16px")
       .text("Second Debate");
-  
+
    svg.append("line")
       .attr("x1", xScale(debate3))
       .attr("y1", yScale(-0.655))
@@ -364,7 +364,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .attr("text-anchor", "right")
       //.style("font-size", "16px")
       .text("Clinton Faints at 9/11");
-  
+
   // draw dots
   svg.selectAll(".dot")
       .data(data)
@@ -490,6 +490,48 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
 
   dropDown.on("change", function() {
        var selected = this.value;
+
+       svg.selectAll(".count")
+         .attr("visibility", "hidden");
+
+       //Summary count for Clinton
+       d3.csv("{{ url_for('static', filename='total_count.csv') }}", function(tot_count_all) {
+         var selected = $('#filter').find(":selected").text();
+         csv = tot_count_all.filter(function(row) {
+           return row['candidate'] == 'Clinton' && row['source'] == selected;
+         });
+
+           svg.append("text")
+               .attr("class", "count")
+               .attr("x", width + 20)
+               .attr("y", 10)
+               .attr("dy", ".35em")
+               .data(csv)
+               .style("text-anchor", "end")
+               .text(function(d) {return d.count;});
+       });
+
+       //Summary count for Trump
+       d3.csv("{{ url_for('static', filename='total_count.csv') }}", function(tot_count_all2) {
+         csv = tot_count_all2.filter(function(row) {
+           return row['candidate'] == 'Trump' && row['source'] == selected;
+         })
+
+         tot_count_all2.forEach(function(d) {
+           d.count2 = +d.count;
+           d.candidate2 = d.candidate;
+         });
+
+           svg.append("text")
+               .attr("class", "count")
+               .attr("x", width + 20)
+               .attr("y", 30)
+               .attr("dy", ".35em")
+               .data(csv)
+               .style("text-anchor", "end")
+               .text(function(d) {return d.count2;});
+       });
+
        // make all dots visible if the user has selected "All"
        if(selected == 'All'){
          svg.selectAll(".dot")
@@ -536,7 +578,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
           else {
             svg.selectAll(".dot")
                .filter(function(d) {return selected != d.source && selected2 != d.source ;})
-               .attr("visibility", "hidden");  
+               .attr("visibility", "hidden");
           }
 
         data_selected = data.filter(function(row) {
@@ -915,24 +957,43 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
       .style("text-anchor", "end")
       .text("All news");
 
-  d3.csv("{{ url_for('static', filename='total_count_all.csv') }}", function(tot_count_all) {
-    tot_count_all.forEach(function(d) {
-      d.count = +d.count;
+      //Summary count for Clinton
+  d3.csv("{{ url_for('static', filename='total_count.csv') }}", function(tot_count_all) {
+    var selected = $('#filter').find(":selected").text();
+    csv = tot_count_all.filter(function(row) {
+      return row['candidate'] == 'Clinton' && row['source'] == selected;
     });
 
       svg.append("text")
+          .attr("class", "count")
           .attr("x", width + 20)
           .attr("y", 10)
           .attr("dy", ".35em")
+          .data(csv)
           .style("text-anchor", "end")
-          .text("36341");
+          .text(function(d) {return d.count;});
+  });
+
+  //Summary count for Trump
+  d3.csv("{{ url_for('static', filename='total_count.csv') }}", function(tot_count_all2) {
+    var selected = $('#filter').find(":selected").text();
+    csv = tot_count_all2.filter(function(row) {
+      return row['candidate'] == 'Trump' && row['source'] == selected;
+    })
+
+    tot_count_all2.forEach(function(d) {
+      d.count2 = +d.count;
+      d.candidate2 = d.candidate;
+    });
 
       svg.append("text")
+          .attr("class", "count")
           .attr("x", width + 20)
           .attr("y", 30)
           .attr("dy", ".35em")
+          .data(csv)
           .style("text-anchor", "end")
-          .text("39511");
+          .text(function(d) {return d.count2;});
   });
 
   d3.csv("{{ url_for('static', filename='avg_sentiment.csv') }}", function(data_avg) {
@@ -983,7 +1044,7 @@ d3.csv("{{ url_for('static', filename='sentiment.csv') }}", function(error, data
     d3.selectAll("#"+ select2)
       .attr("visibility", display_line);
 
-  }); 
+  });
 
   d3.selectAll("input[name=Average_Trend]").on("change", function() {
     display = this.checked ? "inline" : "none";
